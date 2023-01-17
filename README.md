@@ -8,6 +8,6 @@ For ECS189G at UC Davis, A Deep Learning team project
 - optionally also add lines to reset it to default upon exiting the venv as described [here](https://stackoverflow.com/a/4758351/4268196)
 
 ### usage
-- run `source `venv/bin/activate``
+- run `source venv/bin/activate`
 - from the `script` directory of the applicable stage, run `../../venv/bin/python3 scriptname.py`
 - alternatively use the big friendly play button in pycharm.
