@@ -9,7 +9,7 @@ sys.path.insert(0, ROOT_DIR)
 # Then, we make sure the OS's cwd is at the local level to make it work
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-useGPU = False #True
+useGPU = True
 
 
 # -----------------------
