@@ -36,4 +36,4 @@ class Dataset_Loader(dataset):
             XTest.append(elements[1:])
             yTest.append(elements[1])
         f2.close()
-        return {'X': X, 'y': y, 'XTest': XTest, 'YTest': yTest}
+        return {'X': X, 'y': y, 'XTest': XTest, 'yTest': yTest}
