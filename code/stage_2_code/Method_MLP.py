@@ -23,13 +23,15 @@ useGPU = True
 
 # -----------------------
 
-from codes.base_class.method import method
-from codes.stage_1_code.Evaluate_Accuracy import Evaluate_Accuracy
+from code.base_class.method import method
+from code.stage_2_code.Evaluate_Accuracy import Evaluate_Accuracy
 import torch
 from torch import nn
 import numpy as np
-from tqdm import trange
-
+try:
+    from tqdm import trange
+except (ImportError, ModuleNotFoundError) as e:
+    trange = range
 
 class Method_MLP(method, nn.Module):
     data = None
