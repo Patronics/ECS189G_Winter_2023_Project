@@ -56,10 +56,8 @@ class Method_MLP(method, nn.Module):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
         # check here for the nn.CrossEntropyLoss doc: https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html
         loss_function = nn.CrossEntropyLoss()
-<<<<<<< Updated upstream
-=======
-            #valid loss functions found so far: nn.CrossEntropyLoss, nn.MultiMarginLoss, nn.NLLLoss
->>>>>>> Stashed changes
+
+         #valid loss functions found so far: nn.CrossEntropyLoss, nn.MultiMarginLoss, nn.NLLLoss
         # for training accuracy investigation purpose
         accuracy_evaluator = Evaluate_Accuracy('training evaluator', '')
 
