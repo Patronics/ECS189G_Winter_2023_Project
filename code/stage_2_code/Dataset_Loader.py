@@ -30,7 +30,7 @@ class Dataset_Loader(dataset):
         XTest = []
         yTest = []
         f2 = open(self.dataset_source_folder_path + self.dataset_test_file_name, 'r')
-        for line in f:
+        for line in f2:
             line = line.strip('\n')
             elements = [int(i) for i in line.split(',')]
             XTest.append(elements[1:])
