@@ -18,9 +18,6 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # print(sys.path,os.getcwd())
 
-useGPU = True
-
-
 # -----------------------
 
 from code.base_class.evaluate import evaluate
@@ -36,8 +33,8 @@ class Evaluate_Accuracy(evaluate):
         if isinstance(self.data, torch.Tensor):
             self.data = self.data.cpu().numpy()
         print('evaluating performance...')
-        dataTrue = np.asarray(self.data['true_y'])
-        dataPred = self.data['pred_y'].cpu().detach().numpy()
+        dataTrue = torch.asarray(self.data['true_y']).cpu().detach().numpy()
+        dataPred = torch.asarray(self.data['pred_y']).cpu().detach().numpy()
         print()
         return accuracy_score(dataTrue, dataPred)
         

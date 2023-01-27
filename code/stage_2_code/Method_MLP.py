@@ -18,9 +18,6 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # print(sys.path,os.getcwd())
 
-useGPU = True
-
-
 # -----------------------
 
 from code.base_class.method import method
@@ -36,7 +33,7 @@ except (ImportError, ModuleNotFoundError) as e:
 class Method_MLP(method, nn.Module):
     data = None
     # it defines the max rounds to train the model
-    max_epoch = 150 #500
+    max_epoch = 5#150 #500
     # it defines the learning rate for gradient descent based optimizer for model learning
 
     learning_rate = 1e-3

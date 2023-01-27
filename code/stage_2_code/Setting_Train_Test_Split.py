@@ -18,9 +18,6 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # print(sys.path,os.getcwd())
 
-useGPU = True
-
-
 # -----------------------
 
 from code.base_class.setting import setting
