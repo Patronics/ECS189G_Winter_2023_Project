@@ -33,7 +33,7 @@ except (ImportError, ModuleNotFoundError) as e:
 class Method_MLP(method, nn.Module):
     data = None
     # it defines the max rounds to train the model
-    max_epoch = 5#150 #500
+    max_epoch = 500
     # it defines the learning rate for gradient descent based optimizer for model learning
 
     learning_rate = 1e-3
@@ -99,7 +99,7 @@ class Method_MLP(method, nn.Module):
             # check here for the opti.step doc: https://pytorch.org/docs/stable/optim.html
             # update the variables according to the optimizer and the gradients calculated by the above loss.backward function
             optimizer.step()
-            if epoch%50 == 0:   # %100 by default
+            if epoch%100 == 0:   # %100 by default
                 with torch.no_grad():
                     y_true_numpy = y_true.cpu().detach().numpy()
                     y_pred_numpy = y_pred.cpu().detach().numpy().argmax(1)
