@@ -32,6 +32,7 @@ if 1:
     data_obj = Dataset_Loader('stage_2', '')
     data_obj.dataset_source_folder_path = '../../data/stage_2_data/'
     data_obj.dataset_source_file_name = 'train.csv'
+    data_obj.dataset_test_file_name = 'test.csv'
 
     method_obj = Method_SVM('support vector machine', '')
     method_obj.c = c

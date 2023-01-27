@@ -27,4 +27,13 @@ class Dataset_Loader(dataset):
             X.append(elements[1:])
             y.append(elements[1])
         f.close()
-        return {'X': X, 'y': y}
+        XTest = []
+        yTest = []
+        f2 = open(self.dataset_source_folder_path + self.dataset_test_file_name, 'r')
+        for line in f:
+            line = line.strip('\n')
+            elements = [int(i) for i in line.split(' ')]
+            XTest.append(elements[1:])
+            yTest.append(elements[1])
+        f2.close()
+        return {'X': X, 'y': y, 'XTest': XTest, 'YTest': yTest}
