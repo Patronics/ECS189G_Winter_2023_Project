@@ -5,6 +5,24 @@ Concrete IO class for a specific dataset
 # Copyright (c) 2017-Current Jiawei Zhang <jiawei@ifmlab.org>
 # License: TBD
 
+# -- compatibility layer --
+import sys
+import os
+# print(sys.path)
+# from the file, add the root directory to python path.
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+# print(ROOT_DIR)
+sys.path.insert(0, ROOT_DIR)
+# # Then, we make sure the OS's cwd is at the local level to make it work
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+# print(sys.path,os.getcwd())
+
+useGPU = True
+
+
+# -----------------------
+
 from code.base_class.dataset import dataset
 
 
@@ -25,7 +43,7 @@ class Dataset_Loader(dataset):
             line = line.strip('\n')
             elements = [int(i) for i in line.split(',')]
             X.append(elements[1:])
-            y.append(elements[1])
+            y.append(elements[0])
         f.close()
         XTest = []
         yTest = []
@@ -34,6 +52,6 @@ class Dataset_Loader(dataset):
             line = line.strip('\n')
             elements = [int(i) for i in line.split(',')]
             XTest.append(elements[1:])
-            yTest.append(elements[1])
+            yTest.append(elements[0])
         f2.close()
         return {'X': X, 'y': y, 'XTest': XTest, 'yTest': yTest}
