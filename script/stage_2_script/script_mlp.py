@@ -6,20 +6,22 @@ import os
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 # print(ROOT_DIR)
 sys.path.insert(0, ROOT_DIR)
-# Then, we make sure the OS's cwd is at the local level to make it work
+# # Then, we make sure the OS's cwd is at the local level to make it work
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+# print(sys.path,os.getcwd())
 
 useGPU = True
 
 
 # -----------------------
 
-from code.stage_2_code.Dataset_Loader import Dataset_Loader
-from code.stage_2_code.Method_MLP import Method_MLP
-from code.stage_2_code.Result_Saver import Result_Saver
-from code.stage_2_code.Setting_KFold_CV import Setting_KFold_CV
-from code.stage_2_code.Setting_Train_Test_Split import Setting_Train_Test_Split
-from code.stage_2_code.Evaluate_Accuracy import Evaluate_Accuracy
+from codes.stage_2_code.Dataset_Loader import Dataset_Loader
+from codes.stage_2_code.Method_MLP import Method_MLP
+from codes.stage_2_code.Result_Saver import Result_Saver
+from codes.stage_2_code.Setting_KFold_CV import Setting_KFold_CV
+from codes.stage_2_code.Setting_Train_Test_Split import Setting_Train_Test_Split
+from codes.stage_2_code.Evaluate_Accuracy import Evaluate_Accuracy
 
 import numpy as np
 import torch
