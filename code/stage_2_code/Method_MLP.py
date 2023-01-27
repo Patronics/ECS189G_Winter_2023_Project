@@ -15,24 +15,25 @@ import numpy as np
 class Method_MLP(method, nn.Module):
     data = None
     # it defines the max rounds to train the model
-    max_epoch = 500
+    max_epoch = 150 #500
     # it defines the learning rate for gradient descent based optimizer for model learning
 
-    learning_rate = 1e-2
+    learning_rate = 1e-3
 
     # it defines the the MLP model architecture, e.g.,
     # how many layers, size of variables in each layer, activation function, etc.
     # the size of the input/output portal of the model architecture should be consistent with our data input and desired output
-    def __init__(self, mName, mDescription):
+    def __init__(self, mName, mDescription, mDevice):
         method.__init__(self, mName, mDescription)
+        self.deviceType = mDevice
         nn.Module.__init__(self)
         # check here for nn.Linear doc: https://pytorch.org/docs/stable/generated/torch.nn.Linear.html
-        self.fc_layer_1 = nn.Linear(784, 500)
+        self.fc_layer_1 = nn.Linear(784, 500).to(self.deviceType)
         # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
-        self.activation_func_1 = nn.ReLU()
-        self.fc_layer_2 = nn.Linear(500, 10)
+        self.activation_func_1 = nn.ReLU().to(self.deviceType)
+        self.fc_layer_2 = nn.Linear(500, 10).to(self.deviceType)
         # check here for nn.Softmax doc: https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html
-        self.activation_func_2 = nn.Softmax(dim=1)
+        self.activation_func_2 = nn.Softmax(dim=1).to(self.deviceType)
 
     # it defines the forward propagation function for input x
     # this function will calculate the output layer by layer
@@ -40,12 +41,12 @@ class Method_MLP(method, nn.Module):
     def forward(self, x):
         '''Forward propagation'''
         # hidden layer embeddings
-        h = self.activation_func_1(self.fc_layer_1(x))
+        h = self.activation_func_1(self.fc_layer_1(x)).to(self.deviceType)
         # outout layer result
         # self.fc_layer_2(h) will be a nx2 tensor
         # n (denotes the input instance number): 0th dimension; 2 (denotes the class number): 1st dimension
         # we do softmax along dim=1 to get the normalized classification probability distributions for each instance
-        y_pred = self.activation_func_2(self.fc_layer_2(h))
+        y_pred = self.activation_func_2(self.fc_layer_2(h)).to(self.deviceType)
         return y_pred
 
     # backward error propagation will be implemented by pytorch automatically
@@ -55,7 +56,7 @@ class Method_MLP(method, nn.Module):
         # check here for the torch.optim doc: https://pytorch.org/docs/stable/optim.html
         optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
         # check here for the nn.CrossEntropyLoss doc: https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html
-        loss_function = nn.CrossEntropyLoss()
+        loss_function = nn.CrossEntropyLoss().to(self.deviceType)
 
          #valid loss functions found so far: nn.CrossEntropyLoss, nn.MultiMarginLoss, nn.NLLLoss
         # for training accuracy investigation purpose
@@ -66,11 +67,11 @@ class Method_MLP(method, nn.Module):
         # you can try to split X and y into smaller-sized batches by yourself
         for epoch in range(self.max_epoch): # you can do an early stop if self.max_epoch is too much...
             # get the output, we need to covert X into torch.tensor so pytorch algorithm can operate on it
-            y_pred = self.forward(torch.FloatTensor(np.array(X)))
+            y_pred = self.forward(torch.FloatTensor(np.array(X)).to(self.deviceType))
             # convert y to torch.tensor as well
-            y_true = torch.LongTensor(np.array(y))
+            y_true = torch.LongTensor(np.array(y)).to(self.deviceType)
             # calculate the training loss
-            train_loss = loss_function(y_pred, y_true)
+            train_loss = loss_function(y_pred, y_true)#.to(self.deviceType)
 
             # check here for the gradient init doc: https://pytorch.org/docs/stable/generated/torch.optim.Optimizer.zero_grad.html
             optimizer.zero_grad()
@@ -80,8 +81,7 @@ class Method_MLP(method, nn.Module):
             # check here for the opti.step doc: https://pytorch.org/docs/stable/optim.html
             # update the variables according to the optimizer and the gradients calculated by the above loss.backward function
             optimizer.step()
-
-            if epoch%100 == 0:
+            if epoch%50 == 0:   # %100 by default
                 accuracy_evaluator.data = {'true_y': y_true, 'pred_y': y_pred.max(1)[1]}
                 print('Epoch:', epoch, 'Accuracy:', accuracy_evaluator.evaluate(), 'Loss:', train_loss.item())
     
@@ -95,7 +95,7 @@ class Method_MLP(method, nn.Module):
     def run(self):
         print('method running...')
         print('--start training...')
-        self.train(self.data['train']['X'], self.data['train']['y'])
+        self.train(self.data['train']['X'], self.data['train']['y']).to(self.deviceType)
         print('--start testing...')
         pred_y = self.test(self.data['test']['X'])
         return {'pred_y': pred_y, 'true_y': self.data['test']['y']}

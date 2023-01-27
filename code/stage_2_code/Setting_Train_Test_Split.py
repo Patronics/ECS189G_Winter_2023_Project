@@ -12,7 +12,7 @@ import numpy as np
 class Setting_Train_Test_Split(setting):
     fold = 3
     
-    def load_run_save_evaluate(self):
+    def load_run_save_evaluate(self, deviceType):
         
         # load dataset
         loaded_data = self.dataset.load()
@@ -21,7 +21,7 @@ class Setting_Train_Test_Split(setting):
 
         # run MethodModule
         self.method.data = {'train': {'X': X_train, 'y': y_train}, 'test': {'X': X_test, 'y': y_test}}
-        learned_result = self.method.run()
+        learned_result = self.method.run().to(deviceType)
             
         # save raw ResultModule
         self.result.data = learned_result

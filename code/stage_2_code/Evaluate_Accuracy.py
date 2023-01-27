@@ -13,6 +13,8 @@ class Evaluate_Accuracy(evaluate):
     data = None
     
     def evaluate(self):
+        if isinstance(self.data, torch.Tensor):
+            self.data = self.data.cpu().numpy()
         print('evaluating performance...')
         return accuracy_score(self.data['true_y'], self.data['pred_y'])
         
