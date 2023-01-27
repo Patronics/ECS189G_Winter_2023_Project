@@ -17,7 +17,7 @@ class Method_MLP(method, nn.Module):
     # it defines the max rounds to train the model
     max_epoch = 500
     # it defines the learning rate for gradient descent based optimizer for model learning
-    learning_rate = 1e-3
+    learning_rate = 1e-3#1e-3
 
     # it defines the the MLP model architecture, e.g.,
     # how many layers, size of variables in each layer, activation function, etc.
@@ -55,6 +55,7 @@ class Method_MLP(method, nn.Module):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
         # check here for the nn.CrossEntropyLoss doc: https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html
         loss_function = nn.CrossEntropyLoss()
+            #valid loss functions found so far: nn.CrossEntropyLoss, nn.MultiMarginLoss, nn.NLLLoss
         # for training accuracy investigation purpose
         accuracy_evaluator = Evaluate_Accuracy('training evaluator', '')
 
