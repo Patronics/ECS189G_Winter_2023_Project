@@ -38,15 +38,14 @@ class Setting_Train_Test_Split(setting):
         # run MethodModule
         self.method.data = {'train': {'X': X_train, 'y': y_train}, 'test': {'X': X_test, 'y': y_test}}
         learned_result = self.method.run()
-            
+        #move data back to CPU if solved initially on GPU
+        learned_result['pred_y'] = torch.asarray(learned_result['pred_y']).cpu().detach().numpy()
+        
         # save raw ResultModule
         self.result.data = learned_result
-        #print(self.result.data)
-        self.result.data['pred_y'] = torch.asarray(self.result.data['pred_y']).cpu().detach().numpy()
         self.result.save()
+        
         self.evaluate.data = learned_result
-        #self.evaluate.data['true_y'] = torch.asarray(self.evaluate.data['true_y']).cpu().detach().numpy()
-        self.evaluate.data['pred_y'] = torch.asarray(self.evaluate.data['pred_y']).cpu().detach().numpy()
         return self.evaluate.evaluate(), None
 
         
