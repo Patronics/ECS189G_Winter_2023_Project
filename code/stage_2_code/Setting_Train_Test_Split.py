@@ -23,6 +23,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 from code.base_class.setting import setting
 from sklearn.model_selection import train_test_split
 import numpy as np
+import torch
 
 class Setting_Train_Test_Split(setting):
     fold = 3
@@ -40,10 +41,12 @@ class Setting_Train_Test_Split(setting):
             
         # save raw ResultModule
         self.result.data = learned_result
-        #self.result.save()
-            
+        #print(self.result.data)
+        self.result.data['pred_y'] = torch.asarray(self.result.data['pred_y']).cpu().detach().numpy()
+        self.result.save()
         self.evaluate.data = learned_result
-        
+        #self.evaluate.data['true_y'] = torch.asarray(self.evaluate.data['true_y']).cpu().detach().numpy()
+        self.evaluate.data['pred_y'] = torch.asarray(self.evaluate.data['pred_y']).cpu().detach().numpy()
         return self.evaluate.evaluate(), None
 
         
