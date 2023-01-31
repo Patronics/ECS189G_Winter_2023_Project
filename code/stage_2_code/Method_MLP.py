@@ -28,6 +28,7 @@ import numpy as np
 try:
     from tqdm import trange
 except (ImportError, ModuleNotFoundError) as e:
+    print("tqdm module not detected, for improved progress updates, install tqdm")
     trange = range
 
 class Method_MLP(method, nn.Module):
@@ -49,13 +50,17 @@ class Method_MLP(method, nn.Module):
         self.fc_layer_1 = nn.Linear(784, 400).to(self.deviceType)
         # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
         self.activation_func_1 = nn.ReLU().to(self.deviceType)
+        
         self.fc_layer_11 = nn.Linear(400, 200).to(self.deviceType)
-        # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
         self.activation_func_11 = nn.ReLU().to(self.deviceType)
+        
         self.fc_layer_12 = nn.Linear(200, 100).to(self.deviceType)
-        # check here for nn.ReLU doc: https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html
         self.activation_func_12 = nn.ReLU().to(self.deviceType)
-        self.fc_layer_2 = nn.Linear(100, 10).to(self.deviceType)
+        
+        self.fc_layer_13 = nn.Linear(100, 30).to(self.deviceType)
+        self.activation_func_13 = nn.ReLU().to(self.deviceType)
+        
+        self.fc_layer_2 = nn.Linear(30, 10).to(self.deviceType)
         # check here for nn.Softmax doc: https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html
         self.activation_func_2 = nn.Softmax(dim=1).to(self.deviceType)
 
@@ -72,7 +77,8 @@ class Method_MLP(method, nn.Module):
         # we do softmax along dim=1 to get the normalized classification probability distributions for each instance
         i = self.activation_func_11(self.fc_layer_11(h)).to(self.deviceType)
         i2 = self.activation_func_12(self.fc_layer_12(i)).to(self.deviceType)
-        y_pred = self.activation_func_2(self.fc_layer_2(i2)).to(self.deviceType)
+        i3 = self.activation_func_13(self.fc_layer_13(i2)).to(self.deviceType)
+        y_pred = self.activation_func_2(self.fc_layer_2(i3)).to(self.deviceType)
         return y_pred
 
     # backward error propagation will be implemented by pytorch automatically
