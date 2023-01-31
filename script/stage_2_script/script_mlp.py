@@ -11,10 +11,13 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # print(sys.path,os.getcwd())
 
+# -----------------------
+
+# -- configuration variables -- #
 useGPU = True
 
-
 # -----------------------
+
 
 from code.stage_2_code.Dataset_Loader import Dataset_Loader
 from code.stage_2_code.Method_MLP import Method_MLP
