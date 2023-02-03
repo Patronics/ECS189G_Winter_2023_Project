@@ -22,7 +22,7 @@ useGPU = True
 from code.stage_2_code.Dataset_Loader import Dataset_Loader
 from code.stage_2_code.Method_MLP import Method_MLP
 from code.stage_2_code.Result_Saver import Result_Saver
-from code.stage_2_code.Setting_KFold_CV import Setting_KFold_CV
+#from code.stage_2_code.Setting_KFold_CV import Setting_KFold_CV
 from code.stage_2_code.Setting_Train_Test_Split import Setting_Train_Test_Split
 from code.stage_2_code.Evaluate_Accuracy import Evaluate_Accuracy
 
