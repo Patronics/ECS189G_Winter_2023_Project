@@ -21,7 +21,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 # -----------------------
 
 from code.base_class.evaluate import evaluate
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score,classification_report
 import numpy as np
 
 
@@ -34,4 +34,9 @@ class Evaluate_Accuracy(evaluate):
         dataPred = self.data['pred_y']
         print()
         return accuracy_score(dataTrue, dataPred)
+
+    def classificationReport(self):
+        dataTrue = self.data['true_y']
+        dataPred = self.data['pred_y']
+        print(classification_report(dataTrue, dataPred))
         

@@ -46,6 +46,7 @@ class Setting_Train_Test_Split(setting):
         self.result.save()
         
         self.evaluate.data = learned_result
+        self.evaluate.classificationReport() #hit em
         return self.evaluate.evaluate(), None
 
         
