@@ -16,15 +16,15 @@ DATASET_NAME = 'CIFAR'
 
 if DATASET_NAME == 'ORL':
     num_channel = 3
-    fc_input = 123648
+    fc_input = 164864
     fc_output = 40
 elif DATASET_NAME == 'MNIST':
     num_channel = 1
-    fc_input = 9408
+    fc_input = 12544
     fc_output = 10
 elif DATASET_NAME == 'CIFAR':
     num_channel = 3
-    fc_input = 12288
+    fc_input = 16384
     fc_output = 10
 # -----------------------
 

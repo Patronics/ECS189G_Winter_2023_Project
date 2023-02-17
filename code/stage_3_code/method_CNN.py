@@ -48,10 +48,10 @@ class Method_CNN(method, nn.Module):
         #-- Layer Definition --
         self.conv1 = nn.Conv2d(in_channels=sInput, out_channels=16, kernel_size=3, stride=1, padding=1).to(self.deviceType)
         self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, stride=1, padding=1).to(self.deviceType)
-        self.conv3 = nn.Conv2d(in_channels=32, out_channels=48, kernel_size=3, stride=1, padding=1).to(self.deviceType)
+        self.conv3 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, stride=1, padding=1).to(self.deviceType)
         
-        self.fc1 = nn.Linear(fc_input, 96).to(self.deviceType)
-        self.fc2 = nn.Linear(96, fc_output).to(self.deviceType)
+        self.fc1 = nn.Linear(fc_input, 128).to(self.deviceType)
+        self.fc2 = nn.Linear(128, fc_output).to(self.deviceType)
 
     def forward(self, x, train=True):
         #-- Conv Section --
@@ -61,21 +61,21 @@ class Method_CNN(method, nn.Module):
         x = F.relu(x)
         x = self.conv3(x)
         x = F.relu(x)
-        x = F.dropout2d(x, p=0.25, training=train)
-        x = F.max_pool2d(x, 2)
+        x = F.dropout2d(x, p=0.3, training=train)
+        x = F.avg_pool2d(x, 2)
         
         #-- FC Section --
         x = torch.flatten(x, 1)
         x = self.fc1(x)
         x = F.relu(x)
-        x = F.dropout2d(x, p=0.25, training=train)
+        x = F.dropout2d(x, p=0.3, training=train)
         x = self.fc2(x)
         
         return F.relu(x)
     
     def train(self, X, y):
         #-- Tool Init --
-        optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=1e-6, amsgrad=False)
         scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.95)
         loss_function = nn.CrossEntropyLoss()
         
@@ -93,7 +93,7 @@ class Method_CNN(method, nn.Module):
                 loss = loss_function(y_pred, y_true)
                 
                 #Early Stop
-                if loss <= 0.05:
+                if loss <= 0.02:
                     return
                 
                 loss.backward()
