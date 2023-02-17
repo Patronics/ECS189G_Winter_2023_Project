@@ -12,6 +12,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 # -- configuration variables -- #
 useGPU = True
 DATASET_NAME = 'MNIST'
+num_color = 1
 # -----------------------
 
 from code.stage_3_code.dataset_loader import Image_Dataset
@@ -46,7 +47,7 @@ if 1:
     dataset.dataset_source_file_name = DATASET_NAME
     dataset.dataset_source_folder_path = '../../data/stage_3_data/'
     
-    method = Method_CNN('CNN', '', 1, device)
+    method = Method_CNN('CNN', '', num_color, device)
     
     result = Results_CNN('Saver', '')
     result.result_destination_folder_path = '../../result/stage_3_result/CNN_'

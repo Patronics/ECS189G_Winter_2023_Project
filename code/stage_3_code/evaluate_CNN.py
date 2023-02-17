@@ -29,12 +29,12 @@ class Evaluate_CNN(evaluate):
 
     def evaluate(self):
         print('evaluating performance...')
-        dataTrue = self.data['true_y']
-        dataPred = self.data['pred_y']
+        dataPred = self.data[0]
+        dataTrue = self.data[1]
         print()
-        return accuracy_score(dataTrue, dataPred)
+        return accuracy_score(dataTrue.cpu(), dataPred.cpu())
 
     def classificationReport(self):
-        dataTrue = self.data['true_y']
-        dataPred = self.data['pred_y']
-        print(classification_report(dataTrue, dataPred))
+        dataPred = self.data[0]
+        dataTrue = self.data[1]
+        print(classification_report(dataTrue.cpu().numpy(), dataPred.cpu().numpy()))

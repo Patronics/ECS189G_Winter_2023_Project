@@ -33,7 +33,7 @@ except (ImportError, ModuleNotFoundError) as e:
 
 class Method_CNN(method, nn.Module):
 
-    max_epoch = 5
+    max_epoch = 10
     learning_rate = 1e-3
     batch_size = 120
     
@@ -82,7 +82,8 @@ class Method_CNN(method, nn.Module):
         data_iter = Tdata.DataLoader(Tdata.TensorDataset(X, y), batch_size=self.batch_size)
         
         #-- Mini-Batch GD loop --
-        for epoch in trange(self.max_epoch + 1):
+        progress = trange(self.max_epoch)
+        for epoch in progress:
             for batch_i, (images, labels) in enumerate(data_iter):
                 y_pred = self.forward(images.to(self.deviceType))
                 y_true = torch.LongTensor(labels).to(self.deviceType)
@@ -91,6 +92,7 @@ class Method_CNN(method, nn.Module):
                 loss = loss_function(y_pred, y_true)
                 loss.backward()
                 optimizer.step()
+                progress.set_postfix_str(f'Loss: {float(loss.cpu().detach().numpy()):7.6f}', refresh=True)
             
     def test(self, X):
         y_pred = self.forward(X.to(self.deviceType), train=False)
@@ -98,9 +100,9 @@ class Method_CNN(method, nn.Module):
             
             
 
-    def run(self, trainData, trainLabel, testData):
+    def run(self, trainData, trainLabel, testData, testLabel):
         print('method running...')
         print('--start training...')
         self.train(torch.stack(trainData).unsqueeze(1), torch.stack(trainLabel))
         print('--start testing...')
-        return self.test(testData)
+        return (self.test(torch.stack(testData).unsqueeze(1)), torch.stack(testLabel).unsqueeze(1))

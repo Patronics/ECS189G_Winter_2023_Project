@@ -33,9 +33,10 @@ class CNN_Trainer(setting):
         self.method.data = self.dataset.data
         result = self.method.run(list(map(self.selectList_image,self.dataset.data['train'])), 
                                  list(map(self.selectList_label,self.dataset.data['train'])),
-                                 list(map(self.selectList_image,self.dataset.data['test'])))
+                                 list(map(self.selectList_image,self.dataset.data['test'])),
+                                 list(map(self.selectList_label,self.dataset.data['test'])))
         
-        self.result.data = result
+        self.result.data = result[0]
         self.result.save()
         
         self.evaluate.data = result

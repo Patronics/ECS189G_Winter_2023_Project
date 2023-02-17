@@ -27,12 +27,12 @@ class Results_CNN(result):
 
     def save(self):
         print('saving results...')
-        f = open(self.result_destination_folder_path + self.result_destination_file_name + '_' + str(self.fold_count), 'wb')
+        f = open(self.result_destination_folder_path + self.result_destination_file_name, 'wb')
         pickle.dump(self.data, f)
         f.close()
  
     def load(self):
         print('loading results...')
-        f = open(self.result_destination_folder_path + self.result_destination_file_name + '_' + str(self.fold_count), 'rb')
+        f = open(self.result_destination_folder_path + self.result_destination_file_name, 'rb')
         self.data = pickle.load(f)
         f.close()
