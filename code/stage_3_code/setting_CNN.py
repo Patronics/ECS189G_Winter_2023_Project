@@ -18,8 +18,6 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 from code.base_class.setting import setting
 import torch
-import numpy as np
-import pandas as pd
 
 #-----------------------------------------------------
 class CNN_Trainer(setting):

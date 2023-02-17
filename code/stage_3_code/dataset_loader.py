@@ -17,7 +17,6 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 # -----------------------
 
 from code.base_class.dataset import dataset
-import numpy as np
 import pickle
 
 class Image_Dataset(dataset):

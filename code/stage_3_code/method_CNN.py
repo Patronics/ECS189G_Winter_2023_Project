@@ -21,7 +21,6 @@ import torch.nn.functional as F
 import torch.utils.data as Tdata
 from torch import nn
 import torch
-import numpy as np
 
 try:
     from tqdm import trange
@@ -62,7 +61,7 @@ class Method_CNN(method, nn.Module):
         x = self.conv3(x)
         x = F.relu(x)
         x = F.dropout2d(x, p=0.25, training=train)
-        x = F.avg_pool2d(x, 2)
+        x = F.max_pool2d(x, 2)
         
         #-- FC Section --
         x = torch.flatten(x, 1)
@@ -95,7 +94,7 @@ class Method_CNN(method, nn.Module):
                 optimizer.step()
             
     def test(self, X):
-        y_pred = self.forward(X.to(self.deviceType))
+        y_pred = self.forward(X.to(self.deviceType), train=False)
         return y_pred.max(1)[1]
             
             
