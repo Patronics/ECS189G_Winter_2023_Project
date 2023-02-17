@@ -33,7 +33,7 @@ except (ImportError, ModuleNotFoundError) as e:
 
 class Method_CNN(method, nn.Module):
 
-    max_epoch = 50
+    max_epoch = 5
     learning_rate = 1e-3
     batch_size = 120
     
@@ -45,11 +45,11 @@ class Method_CNN(method, nn.Module):
         self.deviceType = mDevice
         
         #-- Layer Definition --
-        self.conv1 = nn.Conv2d(in_channels=sInput, out_channels=16, kernel_size=3, stride=1).to(self.deviceType)
-        self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, stride=1).to(self.deviceType)
-        self.conv3 = nn.Conv2d(in_channels=32, out_channels=48, kernel_size=3, stride=1).to(self.deviceType)
+        self.conv1 = nn.Conv2d(in_channels=sInput, out_channels=16, kernel_size=3, stride=1, padding=1).to(self.deviceType)
+        self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, stride=1, padding=1).to(self.deviceType)
+        self.conv3 = nn.Conv2d(in_channels=32, out_channels=48, kernel_size=3, stride=1, padding=1).to(self.deviceType)
         
-        self.fc1 = nn.Linear(6912, 96).to(self.deviceType)
+        self.fc1 = nn.Linear(9408, 96).to(self.deviceType)
         self.fc2 = nn.Linear(96, 10).to(self.deviceType)
 
     def forward(self, x, train=True):
@@ -84,7 +84,6 @@ class Method_CNN(method, nn.Module):
         #-- Mini-Batch GD loop --
         for epoch in trange(self.max_epoch + 1):
             for batch_i, (images, labels) in enumerate(data_iter):
-                print(images.shape)
                 y_pred = self.forward(images.to(self.deviceType))
                 y_true = torch.LongTensor(labels).to(self.deviceType)
                 
@@ -102,8 +101,6 @@ class Method_CNN(method, nn.Module):
     def run(self, trainData, trainLabel, testData):
         print('method running...')
         print('--start training...')
-        
-        #print(torch.stack(trainData).unsqueeze(1))
         self.train(torch.stack(trainData).unsqueeze(1), torch.stack(trainLabel))
         print('--start testing...')
         return self.test(testData)
