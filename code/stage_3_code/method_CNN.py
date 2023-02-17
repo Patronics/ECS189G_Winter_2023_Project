@@ -20,6 +20,7 @@ from code.base_class.method import method
 import torch.nn.functional as F
 import torch.utils.data as Tdata
 from torch import nn
+import torch.optim as optim
 import torch
 
 try:
@@ -33,13 +34,13 @@ except (ImportError, ModuleNotFoundError) as e:
 
 class Method_CNN(method, nn.Module):
 
-    max_epoch = 10
+    max_epoch = 250
     learning_rate = 1e-3
     batch_size = 120
     
     deviceType = None
     
-    def __init__(self, mName=None, mDescription=None, sInput=1 ,mDevice=None):
+    def __init__(self, mName=None, mDescription=None, sInput=0, fc_input=0, fc_output=0 ,mDevice=None):
         method.__init__(self, mName, mDescription)
         nn.Module.__init__(self)
         self.deviceType = mDevice
@@ -49,8 +50,8 @@ class Method_CNN(method, nn.Module):
         self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, stride=1, padding=1).to(self.deviceType)
         self.conv3 = nn.Conv2d(in_channels=32, out_channels=48, kernel_size=3, stride=1, padding=1).to(self.deviceType)
         
-        self.fc1 = nn.Linear(9408, 96).to(self.deviceType)
-        self.fc2 = nn.Linear(96, 10).to(self.deviceType)
+        self.fc1 = nn.Linear(fc_input, 96).to(self.deviceType)
+        self.fc2 = nn.Linear(96, fc_output).to(self.deviceType)
 
     def forward(self, x, train=True):
         #-- Conv Section --
@@ -75,8 +76,8 @@ class Method_CNN(method, nn.Module):
     def train(self, X, y):
         #-- Tool Init --
         optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
-        loss_function = nn.CrossEntropyLoss().to(self.deviceType)
-        evaluator = Evaluate_CNN('training evaluator', '')
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.95)
+        loss_function = nn.CrossEntropyLoss()
         
         #Pointer to a batch
         data_iter = Tdata.DataLoader(Tdata.TensorDataset(X, y), batch_size=self.batch_size)
@@ -90,19 +91,46 @@ class Method_CNN(method, nn.Module):
                 
                 optimizer.zero_grad()
                 loss = loss_function(y_pred, y_true)
+                
+                #Early Stop
+                if loss <= 0.05:
+                    return
+                
                 loss.backward()
                 optimizer.step()
-                progress.set_postfix_str(f'Loss: {float(loss.cpu().detach().numpy()):7.6f}', refresh=True)
+                progress.set_postfix_str(f'Loss: {float(loss.cpu().detach().numpy()):7.6f}, lrate: {scheduler.get_last_lr()[0]:2.6f}', refresh=True)
+            scheduler.step()
+            
+                
             
     def test(self, X):
         y_pred = self.forward(X.to(self.deviceType), train=False)
         return y_pred.max(1)[1]
             
-            
+    def inputDataPrep(self, data):
+        with torch.no_grad():
+            if len(data.shape) == 4: # 3ch Color image
+                dataSlices = []
+                for i in range(data.shape[3]):
+                    dataSlices.append(data[:,:,:,i])
+                newData = torch.stack(dataSlices,dim=1)
+                return newData
+            else:                   # 1ch Grey image
+                newData = data.unsqueeze(1)
+                return newData
 
     def run(self, trainData, trainLabel, testData, testLabel):
+        trainData = self.inputDataPrep(torch.stack(trainData))
+        testData = self.inputDataPrep(torch.stack(testData))
         print('method running...')
         print('--start training...')
-        self.train(torch.stack(trainData).unsqueeze(1), torch.stack(trainLabel))
+        
+        #Offset for label classification
+        if min(testLabel) or min(trainLabel):
+            offset = 1
+        else:
+            offset = 0
+        
+        self.train(trainData, torch.stack(trainLabel)-offset)
         print('--start testing...')
-        return (self.test(torch.stack(testData).unsqueeze(1)), torch.stack(testLabel).unsqueeze(1))
+        return (self.test(testData), torch.stack(testLabel)-offset)

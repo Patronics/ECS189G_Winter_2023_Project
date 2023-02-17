@@ -11,8 +11,21 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # -- configuration variables -- #
 useGPU = True
-DATASET_NAME = 'MNIST'
-num_color = 1
+DATASET_NAME = 'CIFAR'
+
+
+if DATASET_NAME == 'ORL':
+    num_channel = 3
+    fc_input = 123648
+    fc_output = 40
+elif DATASET_NAME == 'MNIST':
+    num_channel = 1
+    fc_input = 9408
+    fc_output = 10
+elif DATASET_NAME == 'CIFAR':
+    num_channel = 3
+    fc_input = 12288
+    fc_output = 10
 # -----------------------
 
 from code.stage_3_code.dataset_loader import Image_Dataset
@@ -20,7 +33,6 @@ from code.stage_3_code.method_CNN import Method_CNN
 from code.stage_3_code.setting_CNN import CNN_Trainer
 from code.stage_3_code.evaluate_CNN import Evaluate_CNN
 from code.stage_3_code.result_CNN import Results_CNN
-import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
@@ -47,7 +59,7 @@ if 1:
     dataset.dataset_source_file_name = DATASET_NAME
     dataset.dataset_source_folder_path = '../../data/stage_3_data/'
     
-    method = Method_CNN('CNN', '', num_color, device)
+    method = Method_CNN('CNN', '', num_channel, fc_input, fc_output, device)
     
     result = Results_CNN('Saver', '')
     result.result_destination_folder_path = '../../result/stage_3_result/CNN_'
