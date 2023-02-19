@@ -63,7 +63,7 @@ if 1:
     
     result = Results_CNN('Saver', '')
     result.result_destination_folder_path = '../../result/stage_3_result/CNN_'
-    result.result_destination_file_name = 'prediction_result'
+    result.result_destination_file_name = 'prediction_result-'+DATASET_NAME
     
     evaluate = Evaluate_CNN('accuracy', '')
     
