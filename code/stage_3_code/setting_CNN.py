@@ -36,7 +36,7 @@ class CNN_Trainer(setting):
                                  list(map(self.selectList_image,self.dataset.data['test'])),
                                  list(map(self.selectList_label,self.dataset.data['test'])))
         
-        self.result.data = result[0]
+        self.result.data = result[0].cpu().detach().numpy()
         self.result.save()
         
         self.evaluate.data = result
