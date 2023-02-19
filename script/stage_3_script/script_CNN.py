@@ -11,8 +11,16 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # -- configuration variables -- #
 useGPU = True
-DATASET_NAME = 'CIFAR'
 
+#    uncomment whichever dataset you'd like to run the network on by default
+DATASET_NAME = 'ORL'
+#DATASET_NAME = 'MNIST'
+#DATASET_NAME = 'CIFAR'
+
+
+if (len(sys.argv)==2):
+    DATASET_NAME = sys.argv[1]
+    print("detected command line argument "+sys.argv[1]+" attempting to use that dataset")
 
 if DATASET_NAME == 'ORL':
     num_channel = 3
@@ -26,6 +34,9 @@ elif DATASET_NAME == 'CIFAR':
     num_channel = 3
     fc_input = 16384
     fc_output = 10
+else:
+    print("invalid dataset name provided, please choose from [ORL, MNIST, CIFAR]")
+    sys.exit(1)
 # -----------------------
 
 from code.stage_3_code.dataset_loader import Image_Dataset
