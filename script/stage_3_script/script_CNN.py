@@ -20,7 +20,7 @@ DATASET_NAME = 'ORL'
 
 if (len(sys.argv)==2):
     DATASET_NAME = sys.argv[1]
-    print("detected command line argument "+sys.argv[1]+" attempting to use that dataset")
+    print("detected command line argument '"+sys.argv[1]+"', attempting to use that dataset")
 
 if DATASET_NAME == 'ORL':
     num_channel = 3
