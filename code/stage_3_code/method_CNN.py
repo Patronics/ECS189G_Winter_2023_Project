@@ -36,7 +36,7 @@ class Method_CNN(method, nn.Module):
 
     max_epoch = 250
     learning_rate = 1e-3
-    batch_size = 120
+    batch_size = 280
     
     deviceType = None
     
@@ -61,14 +61,14 @@ class Method_CNN(method, nn.Module):
         x = F.relu(x)
         x = self.conv3(x)
         x = F.relu(x)
-        x = F.dropout2d(x, p=0.3, training=train)
-        x = F.avg_pool2d(x, 2)
+        x = F.dropout(x, p=0.45, training=train)
+        x = F.max_pool2d(x, 2)
         
         #-- FC Section --
         x = torch.flatten(x, 1)
         x = self.fc1(x)
         x = F.relu(x)
-        x = F.dropout2d(x, p=0.3, training=train)
+        x = F.dropout(x, p=0.45, training=train)
         x = self.fc2(x)
         
         return F.relu(x)
@@ -76,7 +76,7 @@ class Method_CNN(method, nn.Module):
     def train(self, X, y):
         #-- Tool Init --
         optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=1e-6, amsgrad=False)
-        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.95)
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.9)
         loss_function = nn.CrossEntropyLoss()
         
         #Pointer to a batch
