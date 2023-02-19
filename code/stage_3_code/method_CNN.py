@@ -34,9 +34,9 @@ except (ImportError, ModuleNotFoundError) as e:
 
 class Method_CNN(method, nn.Module):
 
-    max_epoch = 250
+    max_epoch = 200
     learning_rate = 1e-3
-    batch_size = 280
+    batch_size = 220
     
     deviceType = None
     
@@ -47,8 +47,8 @@ class Method_CNN(method, nn.Module):
         
         #-- Layer Definition --
         self.conv1 = nn.Conv2d(in_channels=sInput, out_channels=16, kernel_size=3, stride=1, padding=1).to(self.deviceType)
-        self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3, stride=1, padding=1).to(self.deviceType)
-        self.conv3 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, stride=1, padding=1).to(self.deviceType)
+        self.conv2 = nn.Conv2d(in_channels=16, out_channels=48, kernel_size=3, stride=1, padding=1).to(self.deviceType)
+        self.conv3 = nn.Conv2d(in_channels=48, out_channels=64, kernel_size=3, stride=1, padding=1).to(self.deviceType)
         
         self.fc1 = nn.Linear(fc_input, 128).to(self.deviceType)
         self.fc2 = nn.Linear(128, fc_output).to(self.deviceType)
@@ -57,18 +57,20 @@ class Method_CNN(method, nn.Module):
         #-- Conv Section --
         x = self.conv1(x)
         x = F.relu(x)
+        x = F.dropout(x, p=0.1, training=train)
         x = self.conv2(x)
         x = F.relu(x)
+        x = F.dropout(x, p=0.2, training=train)
         x = self.conv3(x)
         x = F.relu(x)
-        x = F.dropout(x, p=0.45, training=train)
+        x = F.dropout(x, p=0.4, training=train)
         x = F.max_pool2d(x, 2)
         
         #-- FC Section --
         x = torch.flatten(x, 1)
         x = self.fc1(x)
         x = F.relu(x)
-        x = F.dropout(x, p=0.45, training=train)
+        x = F.dropout(x, p=0.4, training=train)
         x = self.fc2(x)
         
         return F.relu(x)
@@ -76,7 +78,7 @@ class Method_CNN(method, nn.Module):
     def train(self, X, y):
         #-- Tool Init --
         optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=1e-6, amsgrad=False)
-        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.9)
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.85)
         loss_function = nn.CrossEntropyLoss()
         
         #Pointer to a batch

@@ -11,7 +11,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # -- configuration variables -- #
 useGPU = True
-DATASET_NAME = 'CIFAR'
+DATASET_NAME = 'ORL'
 
 
 if DATASET_NAME == 'ORL':
