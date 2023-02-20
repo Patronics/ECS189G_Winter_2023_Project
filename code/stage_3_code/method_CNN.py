@@ -40,6 +40,8 @@ class Method_CNN(method, nn.Module):
     
     deviceType = None
     
+    PRINT_LOSS_PER_EPOCH = True
+    
     def __init__(self, mName=None, mDescription=None, sInput=0, fc_input=0, fc_output=0 ,mDevice=None):
         method.__init__(self, mName, mDescription)
         nn.Module.__init__(self)
@@ -85,8 +87,15 @@ class Method_CNN(method, nn.Module):
         data_iter = Tdata.DataLoader(Tdata.TensorDataset(X, y), batch_size=self.batch_size)
         
         #-- Mini-Batch GD loop --
-        progress = trange(self.max_epoch)
+        if self.PRINT_LOSS_PER_EPOCH:
+            progress = range(self.max_epoch)
+        else:
+            progress = trange(self.max_epoch, desc='Epoch', leave=True)
+        
         for epoch in progress:
+            if self.PRINT_LOSS_PER_EPOCH:
+                print(epoch+1, end='\t')
+
             for batch_i, (images, labels) in enumerate(data_iter):
                 y_pred = self.forward(images.to(self.deviceType))
                 y_true = torch.LongTensor(labels).to(self.deviceType)
@@ -94,13 +103,19 @@ class Method_CNN(method, nn.Module):
                 optimizer.zero_grad()
                 loss = loss_function(y_pred, y_true)
                 
-                #Early Stop
-                if loss <= 0.02:
-                    return
+                # Early Stop
+                # if loss <= 0.001:
+                #     return
                 
                 loss.backward()
                 optimizer.step()
-                progress.set_postfix_str(f'Loss: {float(loss.cpu().detach().numpy()):7.6f}, lrate: {scheduler.get_last_lr()[0]:2.6f}', refresh=True)
+
+                if not self.PRINT_LOSS_PER_EPOCH:
+                    progress.set_postfix_str(f'Loss: {float(loss.cpu().detach().numpy()):7.6f}, lrate: {scheduler.get_last_lr()[0]:2.6f}', refresh=True)
+            
+            if self.PRINT_LOSS_PER_EPOCH:
+                print(f'{float(loss.cpu().detach().numpy()):7.6f}')
+            
             scheduler.step()
             
                 
