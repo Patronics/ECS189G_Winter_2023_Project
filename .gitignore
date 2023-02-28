@@ -2,5 +2,5 @@
 result/*/MLP_prediction_result_*
 codes
 data/stage*data
-
+data/generated_stage_*_data
 venv
