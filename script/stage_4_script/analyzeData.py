@@ -6,7 +6,7 @@ if not os.path.exists("./generated_stage_4_data"):
 
 #scans through a directory's files counting each word's occurrence and associating it with a sentiment.
 def scanDirectory(dirName, fileLimit = 0, sentiment = "unset", wordDict={}):
-	print("---- begin scan of "+dirName+" ----")
+	print("---- begin scan of "+dirName+" with sentiment '"+sentiment+"'----")
 	fileCount = 0
 	for file in os.listdir(os.getcwd()+"/stage_4_data/"+dirName):
 		filename = os.fsdecode(file)
@@ -45,13 +45,24 @@ def printResults(wordDict, threshold=0, wordLimit=0):
 		print(str(index)+","+str(k)+","+str(v))
 		index += 1
 
+
 wordDict = scanDirectory("text_classification/train/pos", 0, "pos", {})
-scanDirectory("text_classification/train/neg", 0, "neg", wordDict)
-#scanDirectory("text_classification/test/pos")
-#scanDirectory("text_classification/test/neg")
+wordDict = scanDirectory("text_classification/train/neg", 0, "neg", wordDict)
+
+#just for getting a visual idea of how close the datasets are, don't actually use as ML input: 
+#wordDict = scanDirectory("text_classification/test/pos", 0, "testPos", wordDict)
+#wordDict = scanDirectory("text_classification/test/neg", 0, "testNeg", wordDict)
 #scanDirectory("text_generation")
 
-printResults(wordDict, 10, 0)
+
+#for example, print all words occurring more than 100 times in the corpus:
+#printResults(wordDict, 100, 0)
+
+#for example, print the 5,000 most common words:
+#printResults(wordDict, 0, 5000)
+
+
+printResults(wordDict, 100, 0)
 
 
 
