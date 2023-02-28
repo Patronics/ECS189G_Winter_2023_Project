@@ -67,7 +67,7 @@ wordDict = scanDirectory("text_classification/train/neg", 0, "neg", wordDict)
 	#printResults(wordDict, 0, 0, True)
 
 
-printResults(wordDict, 100, 0, False)
+printResults(wordDict, 5, 0, False)
 
 
 
