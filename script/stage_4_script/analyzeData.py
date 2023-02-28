@@ -35,16 +35,20 @@ def scanDirectory(dirName, fileLimit = 0, sentiment = "unset", wordDict={}):
 #print the sorted results in the form:
 #indexNum, word, {count: totalCount, pos: posCount, neg: negCount}
 #stops after words with fewer than threshold occurrences, or after wordLimit (if nonzero) total words have been printed
-def printResults(wordDict, threshold=0, wordLimit=0):
+def printResults(wordDict, threshold=0, wordLimit=0, toFile=False):
+	outFile=None
+	if toFile:
+		outFile=open(os.getcwd()+"/generated_stage_4_data/thresh-"+str(threshold)+"_lim-"+str(wordLimit)+".txt", "w")
 	index = 0
 	for k, v in sorted(wordDict.items(), key=lambda item: item[1]["count"], reverse=True):
 		if v["count"] < threshold:
 			break
 		if wordLimit and wordLimit<index:
 			break
-		print(str(index)+","+str(k)+","+str(v))
+		print(str(index)+","+str(k)+","+str(v), file=outFile)
 		index += 1
-
+	if toFile:
+		outFile.close()
 
 wordDict = scanDirectory("text_classification/train/pos", 0, "pos", {})
 wordDict = scanDirectory("text_classification/train/neg", 0, "neg", wordDict)
@@ -56,13 +60,14 @@ wordDict = scanDirectory("text_classification/train/neg", 0, "neg", wordDict)
 
 
 #for example, print all words occurring more than 100 times in the corpus:
-#printResults(wordDict, 100, 0)
-
+	#printResults(wordDict, 100, 0)
 #for example, print the 5,000 most common words:
-#printResults(wordDict, 0, 5000)
+	#printResults(wordDict, 0, 5000)
+#for example, output all words found into a file:
+	#printResults(wordDict, 0, 0, True)
 
 
-printResults(wordDict, 100, 0)
+printResults(wordDict, 100, 0, False)
 
 
 
