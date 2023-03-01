@@ -29,21 +29,29 @@ for line in text.splitlines()[1:]:
 
   # convert to lower case
   line = line.lower()
-
+  
+  #lines that start with subreddit names are not jokes
+  if line.startswith('/r/'):
+    continue
+  
   # remove links
   if 'http' in line:
-    fixed = re.sub(r'/\[(.+?)\]\((https?:\/\/[a-zA-Z0-9\/.(]+?)\)/g', r'\1', line)
+    #remove  links with [link formatting](http://example.com)
+    line = re.sub(r'\[(.+?)\]\((https?:\/\/[a-zA-Z0-9\/.(&\?=\-;_]+?)\)', r'\1', line)
+    #remove raw links without formatting http://example.com
+    line = re.sub(r'\(?https?:\/\/[a-zA-Z0-9\/.(&\?=\-;_]+\)?', '', line)
+    #print(line)
 
-  # print(line)
-
-  if 'x-post' in line:
+  #remove mention of cross-posts
+  if any(s in line for s in ['x-post','x post','xpost']):
     # print(line)
-    line = re.sub('\(?x-post from [\w\/ ]+\)?:?', '', line)
-    # print(line)
+    line = re.sub('\(?x.?post from [\w\/ ]+\)?:?', '', line)
 
-    # print('.......')
-
+  #mentions of subreddit names
+  #if 'r/' in line:
+  #  print (line)
   # split into words
+  
   tokens = word_tokenize(line)
 
   # remove punctuation from each word

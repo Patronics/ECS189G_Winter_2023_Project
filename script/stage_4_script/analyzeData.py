@@ -8,11 +8,11 @@ if not os.path.exists("./generated_stage_4_data"):
 def scanDirectory(dirName, fileLimit = 0, sentiment = "unset", wordDict={}):
 	print("---- begin scan of "+dirName+" with sentiment '"+sentiment+"'----")
 	fileCount = 0
-	for file in os.listdir(os.getcwd()+"/stage_4_data/"+dirName):
+	for file in os.listdir(os.getcwd()+"/"+dirName):
 		filename = os.fsdecode(file)
 		#print(filename)
 		fileCount+=1
-		for line in open(os.getcwd()+"/stage_4_data/"+dirName+"/"+file):
+		for line in open(os.getcwd()+"/"+dirName+"/"+file):
 			#print(line)
 			for word in line.split():
 				#print(word)
@@ -36,7 +36,7 @@ def scanDirectory(dirName, fileLimit = 0, sentiment = "unset", wordDict={}):
 def scanFile(fileName, lineLimit = 0, wordDict={}):
 	print("---- begin scan of "+fileName+" ----")
 	lineCount = 0
-	for line in open(os.getcwd()+"/stage_4_data/"+fileName):
+	for line in open(os.getcwd()+"/"+fileName):
 		lineCount+=1
 		#print(line)
 		for word in line.split():
@@ -73,12 +73,12 @@ def printResults(wordDict, threshold=0, wordLimit=0, toFile=False, outFilePrefix
 	if toFile:
 		outFile.close()
 
-wordDict = scanDirectory("text_classification/train/pos", 0, "pos", {})
-wordDict = scanDirectory("text_classification/train/neg", 0, "neg", wordDict)
+wordDict = scanDirectory("stage_4_data/text_classification/train/pos", 0, "pos", {})
+wordDict = scanDirectory("stage_4_data/text_classification/train/neg", 0, "neg", wordDict)
 
 #just for getting a visual idea of how close the datasets are, don't actually use as ML input: 
-#wordDict = scanDirectory("text_classification/test/pos", 0, "testPos", wordDict)
-#wordDict = scanDirectory("text_classification/test/neg", 0, "testNeg", wordDict)
+#wordDict = scanDirectory("stage_4_data/text_classification/test/pos", 0, "testPos", wordDict)
+#wordDict = scanDirectory("stage_4_data/text_classification/test/neg", 0, "testNeg", wordDict)
 #scanDirectory("text_generation")
 
 
@@ -92,7 +92,9 @@ wordDict = scanDirectory("text_classification/train/neg", 0, "neg", wordDict)
 
 printResults(wordDict, 10, 0, True)
 
-jokeDict = scanFile("text_generation/data", 0, {})
+#uncleaned data
+#jokeDict = scanFile("stage_4_data/text_generation/data", 0, {})
+jokeDict = scanFile("generated_stage_4_data/joke_data_clean", 0, {})
 
 printResults(jokeDict, 0, 0, True, "jokes_")
 
