@@ -4,13 +4,20 @@ import string
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
+import nltk
+nltk.download('punkt')
+
+
 os.chdir('../../data')
 if not os.path.exists("./generated_stage_4_data"):
 	os.makedirs("./generated_stage_4_data")
 
 # load data
 filename = 'data'
+outfilepath = os.getcwd() + '/generated_stage_4_data/joke_data_clean'
+print ("---- Processing /stage_4_data/text_generation/" + filename + " ----")
 file = open(os.getcwd() + "/stage_4_data/text_generation/" + filename, 'rt')
+outfile = open(outfilepath, 'w')
 text = file.read()
 file.close()
 
@@ -54,8 +61,8 @@ for line in text.splitlines()[1:]:
   
 out = '\n'.join([' '.join(line) for line in clean_lines])
 
-print(out, file=open('data_clean', 'w'))
-
+print(out, file=outfile)
+print ("---- saved output to " + outfilepath+"  ----")
 # with open('./data') as f:
 #   for line in f:
 #     if 'http' in line:
