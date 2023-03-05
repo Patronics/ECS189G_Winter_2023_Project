@@ -13,8 +13,8 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 useGPU = True
 
 #    uncomment whichever dataset you'd like to run the network on by default
-DATASET_NAME = 'GEN'
-#DATASET_NAME = 'Class'
+# DATASET_NAME = 'GEN'
+DATASET_NAME = 'Class'
 
 # -----------------------
 
@@ -44,15 +44,18 @@ if 1:
         print()
 
     #---- Object Initialization ----
-    
-    dataset = Text_Dataset(DATASET_NAME, '')
-    dataset.dataset_source_file_name = DATASET_NAME
-    dataset.dataset_source_folder_path = '../../data/stage_3_data/'
-    
+
     if DATASET_NAME == "Class":
-        method = Method_RNN_Class('RNN', '', device)
+        method = Method_RNN_Class('RNN', '',mDevice = device)
+        dataset = Text_Dataset(DATASET_NAME, '')
     else:
         method = Method_RNN_Gen('RNN', '', device)
+        dataset = Text_Dataset(DATASET_NAME, '')
+
+    dataset.dataset_source_file_name = DATASET_NAME
+    dataset.dataset_source_folder_path = '../../data/stage_4_data/'
+    
+
     
     result = Results_RNN('Saver', '')
     result.result_destination_folder_path = '../../result/stage_4_result/RNN_'
