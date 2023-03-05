@@ -11,6 +11,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # -- configuration variables -- #
 useGPU = True
+model_type = "lstm"
 
 #    uncomment whichever dataset you'd like to run the network on by default
 # DATASET_NAME = 'GEN'
@@ -46,10 +47,10 @@ if 1:
     #---- Object Initialization ----
 
     if DATASET_NAME == "Class":
-        method = Method_RNN_Class('RNN', '',mDevice = device)
+        method = Method_RNN_Class('RNN', '', vocab_size=2196016, rnn_model=model_type ,mDevice=device)
         dataset = Text_Dataset(DATASET_NAME, '')
     else:
-        method = Method_RNN_Gen('RNN', '', device)
+        method = Method_RNN_Gen('RNN', '', vocab_size=2196016, rnn_model=model_type ,mDevice=device)
         dataset = Text_Dataset(DATASET_NAME, '')
 
     dataset.dataset_source_file_name = DATASET_NAME
@@ -63,7 +64,7 @@ if 1:
     
     evaluate = Evaluate_RNN('accuracy', '')
     
-    setting = RNN_Trainer(f'CNN {DATASET_NAME} trainer', '')
+    setting = RNN_Trainer(f'RNN {DATASET_NAME} trainer', '')
     
     #---- Running ----
     print('************ Start ************')

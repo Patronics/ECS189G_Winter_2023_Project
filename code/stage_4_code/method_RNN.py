@@ -37,7 +37,7 @@ class Method_RNN_Class(method, nn.Module):
     #-- Hyper Variables --
     max_epoch = 200
     learning_rate = 1e-3
-    batch_size = 64
+    batch_size = 3
     
     embedding_dim = 64
     max_words = 32
@@ -81,8 +81,8 @@ class Method_RNN_Class(method, nn.Module):
         
 
     def forward(self, data, lengths):
-        # converts indexes into unique embedding vectors (not pretrained I believe)
-        data = self.embedding(data)
+        # converts indexes into unique embedding vectors
+        # data = self.embedding(data)
         
         # packing/padding to more efficeiently ignore empty inputs
         data = pack_padded_sequence(data, lengths, batch_first=True, enforce_sorted=False)
@@ -107,8 +107,11 @@ class Method_RNN_Class(method, nn.Module):
         #-- Mini-Batch GD loop --
         progress = range(self.max_epoch)
         for epoch in progress:
-            for data, data_lengths, labels in dataLoader(self.batch_size):
-                pred = self.forward(data, data_lengths).squeeze()
+            for data, labels in dataLoader(self.batch_size):
+                lengths = []
+                for i in data:
+                    lengths.append(i.shape[0])
+                pred = self.forward(data, lengths).squeeze()
                 
                 optimizer.zero_grad()
                 loss = loss_function(pred, labels)
