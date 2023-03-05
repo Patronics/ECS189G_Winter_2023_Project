@@ -15,10 +15,10 @@ sys.path.insert(0, ROOT_DIR)
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # -----------------------
-from code.stage_4_code.evaluate_RNN import Evaluate_RNN
-from code.base_class.method import method
+from codes.stage_4_code.evaluate_RNN import Evaluate_RNN
+from codes.base_class.method import method
 import torch.nn.functional as F
-from torchtext.data import BucketIterator
+#from torchtext.data import BucketIterator
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 import torch.utils.data as Tdata
 from torch import nn

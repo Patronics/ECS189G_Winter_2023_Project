@@ -16,7 +16,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # -----------------------
 
-from code.base_class.dataset import dataset
+from codes.base_class.dataset import dataset
 
 class Text_Dataset(dataset):
     

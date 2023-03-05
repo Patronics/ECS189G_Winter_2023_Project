@@ -16,21 +16,13 @@ useGPU = True
 DATASET_NAME = 'GEN'
 #DATASET_NAME = 'Class'
 
-
-if (len(sys.argv)==2):
-    DATASET_NAME = sys.argv[1]
-    print("detected command line argument '"+sys.argv[1]+"', attempting to use that dataset")
-
-else:
-    print("invalid dataset name provided, please choose from [ORL, MNIST, CIFAR]")
-    sys.exit(1)
 # -----------------------
 
-from code.stage_4_code.dataset_RNN import Text_Dataset
-from code.stage_4_code.method_RNN import Method_RNN_Class, Method_RNN_Gen
-from code.stage_4_code.setting_RNN import RNN_Trainer
-from code.stage_4_code.evaluate_RNN import Evaluate_RNN
-from code.stage_4_code.result_RNN import Results_RNN
+from codes.stage_4_code.dataset_RNN import Text_Dataset
+from codes.stage_4_code.method_RNN import Method_RNN_Class, Method_RNN_Gen
+from codes.stage_4_code.setting_RNN import RNN_Trainer
+from codes.stage_4_code.evaluate_RNN import Evaluate_RNN
+from codes.stage_4_code.result_RNN import Results_RNN
 import numpy as np
 import torch
 

@@ -16,7 +16,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # -----------------------
 
-from code.base_class.result import result
+from codes.base_class.result import result
 import pickle
 
 class Results_RNN(result):

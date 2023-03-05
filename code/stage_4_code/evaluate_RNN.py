@@ -16,7 +16,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # -----------------------
 
-from code.base_class.evaluate import evaluate
+from codes.base_class.evaluate import evaluate
 from sklearn.metrics import accuracy_score,classification_report
 
 

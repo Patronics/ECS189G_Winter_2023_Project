@@ -16,7 +16,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # -----------------------
 
-from code.base_class.setting import setting
+from codes.base_class.setting import setting
 
 #-----------------------------------------------------
 class RNN_Trainer(setting):
