@@ -17,8 +17,6 @@ model_type = "lstm"
 # DATASET_NAME = 'GEN'
 DATASET_NAME = 'Class'
 
-<<<<<<< HEAD
-=======
 
 if (len(sys.argv)==2):
     DATASET_NAME = sys.argv[1]
@@ -27,7 +25,6 @@ if (len(sys.argv)==2):
 #else:
 #    print("invalid dataset name provided, please choose from [ORL, MNIST, CIFAR]")
 #    sys.exit(1)
->>>>>>> main
 # -----------------------
 
 from codes.stage_4_code.dataset_RNN import Text_Dataset
