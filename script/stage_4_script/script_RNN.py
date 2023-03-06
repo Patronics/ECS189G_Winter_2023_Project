@@ -21,9 +21,9 @@ if (len(sys.argv)==2):
     DATASET_NAME = sys.argv[1]
     print("detected command line argument '"+sys.argv[1]+"', attempting to use that dataset")
 
-else:
-    print("invalid dataset name provided, please choose from [ORL, MNIST, CIFAR]")
-    sys.exit(1)
+#else:
+#    print("invalid dataset name provided, please choose from [ORL, MNIST, CIFAR]")
+#    sys.exit(1)
 # -----------------------
 
 from code.stage_4_code.dataset_RNN import Text_Dataset
