@@ -58,7 +58,7 @@ if 1:
         method = Method_RNN_Class('RNN', '', vocab_size=2196016, rnn_model=model_type ,mDevice=device)
         dataset = Text_Dataset(DATASET_NAME, '')
     else:
-        method = Method_RNN_Gen('RNN', '', vocab_size=2196016, rnn_model=model_type ,mDevice=device)
+        method = Method_RNN_Gen('RNN', '', rnn_model=model_type ,mDevice=device) #, vocab_size=2196016
         dataset = Text_Dataset(DATASET_NAME, '')
 
     dataset.dataset_source_file_name = DATASET_NAME #not used

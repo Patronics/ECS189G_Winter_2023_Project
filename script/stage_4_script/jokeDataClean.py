@@ -63,6 +63,7 @@ for line in text.splitlines()[1:]:
 
   # remove all punctuation from each word except for . ? -
   allowed_punctuation = ['?', '.', '-']
+  
   table = str.maketrans('', '', string.punctuation.replace('.', '').replace('?', '').replace('-', ''))
 
   stripped = [w.translate(table) for w in tokens]
@@ -78,7 +79,11 @@ for line in text.splitlines()[1:]:
   clean_lines.append([token for token in stripped if len(token)]) 
 
 # print(clean_lines)
-out = '\n'.join([' '.join(line) for line in clean_lines])
+
+#endOfJokeToken = ''
+endOfJokeToken = ' <EOJ>'
+
+out = str(endOfJokeToken+'\n').join([' '.join(line) for line in clean_lines])
 # out = clean_lines
 
 print(out, file=outfile)
