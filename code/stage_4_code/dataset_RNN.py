@@ -77,7 +77,7 @@ class classificationWordLoader(nn.Module):
         self.vocab = self.global_vectors.stoi
         self.reverseVocab = self.global_vectors.itos
         self.tokens = [tokenizer(x) for x in reviews]
-        self.tokens = np.array(self.tokens)
+        self.tokens = np.array(self.tokens, dtype=object)
         rawLabels = df['label'].to_list()
         self.yLabels = torch.tensor(rawLabels)
         labelsOneHot = [[1,0] if i == 0 else [0,1] for i in rawLabels]
@@ -124,7 +124,7 @@ class generationWordLoader(nn.Module):
         self.vocab = self.global_vectors.stoi
         self.reverseVocab = self.global_vectors.itos
         self.tokens = [tokenizer(x) for x in jokes]
-        self.tokens = np.array(self.tokens)
+        self.tokens = np.array(self.tokens, dtype=object)
         
         self.lengths = []
         for i in self.tokens:
