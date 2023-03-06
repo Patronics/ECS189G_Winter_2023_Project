@@ -35,9 +35,9 @@ except (ImportError, ModuleNotFoundError) as e:
 
 class Method_RNN_Class(method, nn.Module):
     #-- Hyper Variables --
-    max_epoch = 200
+    max_epoch = 100
     learning_rate = 1e-3
-    batch_size = 3
+    batch_size = 128
     
     embedding_dim = 50
     max_words = 32
@@ -51,7 +51,7 @@ class Method_RNN_Class(method, nn.Module):
         self.deviceType = mDevice
         
         #-- Embedding Layer Definition --
-        self.embedding = nn.Embedding(vocab_size, embedding_dim=self.embedding_dim)
+        #self.embedding = nn.Embedding(vocab_size, embedding_dim=self.embedding_dim)
         
         #-- RNN Architecture Definition --
         if rnn_model == "lstm":
@@ -60,24 +60,24 @@ class Method_RNN_Class(method, nn.Module):
                                num_layers=self.hidden_layers, 
                                bidirectional=self.bidirectional, 
                                dropout=self.dropout,
-                               batch_first=True)
+                               batch_first=True).to(self.deviceType)
         elif rnn_model == "GRU":
             self.rnn = nn.GRU(self.embedding_dim, 
                               hidden_size=self.max_words, 
                               num_layers=self.hidden_layers, 
                               bidirectional=self.bidirectional, 
                               dropout=self.dropout,
-                              batch_first=True)
+                              batch_first=True).to(self.deviceType)
         else:
             self.rnn = nn.RNN(self.embedding_dim, 
                               hidden_size=self.max_words, 
                               num_layers=self.hidden_layers, 
                               bidirectional=self.bidirectional, 
                               dropout=self.dropout,
-                              batch_first=True)
+                              batch_first=True).to(self.deviceType)
         
         #-- FC Output Layer Definition --
-        self.fc = nn.Linear(self.max_words * (2 if self.bidirectional else 1), 2)
+        self.fc = nn.Linear(self.max_words * (2 if self.bidirectional else 1), 2).to(self.deviceType)
         
 
     def forward(self, data, lengths):
@@ -85,6 +85,7 @@ class Method_RNN_Class(method, nn.Module):
         # data = self.embedding(data)
         
         # packing/padding to more efficeiently ignore empty inputs
+        data = data.to(self.deviceType)
         data = pack_padded_sequence(data, lengths, batch_first=True, enforce_sorted=False)
         data, hn = self.rnn(data)
         data, _ = pad_packed_sequence(data, batch_first=True)
@@ -96,7 +97,7 @@ class Method_RNN_Class(method, nn.Module):
         data = torch.sum(data,1)
     
         data = self.fc(data)
-        return F.sigmoid(data)
+        return F.sigmoid(data).cpu()
     
     def train(self, dataLoader):
         #-- Tool Init --

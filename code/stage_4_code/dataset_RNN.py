@@ -65,7 +65,7 @@ class classificationWordLoader(nn.Module):
         # load the file and put in the format in the sample code above
         print(os.getcwd())
         df = pd.read_csv(filedir,delimiter=',')
-        #df = df.iloc[:1000]
+        #df = df.iloc[10000:15000]
         reviews = df['review'].to_list()
 
         # tokenizer and embedding setup
