@@ -79,6 +79,19 @@ class classificationWordLoader(nn.Module):
         self.tokens = [tokenizer(x) for x in testData]
         self.tokens = np.array(self.tokens)
         self.yTrue = torch.tensor([[0,1],[1,0],[0,1],[1,0],[0,1],[1,0]],dtype=torch.float)
+        self.yLabels = torch.tensor([1,0,1,0,1,0])
+
+    def getData(self):
+        tokens = self.tokens
+        lengths = []
+        for i in tokens:
+            lengths.append(len(i))
+        max_words = max(lengths)
+        tokens = [token+[""] * (max_words-len(token))  if len(token)<max_words else token[:max_words] for token in tokens]
+        tensorList = [self.global_vectors.get_vecs_by_tokens(token) for token in tokens]
+        tensor = torch.stack(tensorList)
+        return tensor,lengths
+
         
 
     def forward(self,batchSize):

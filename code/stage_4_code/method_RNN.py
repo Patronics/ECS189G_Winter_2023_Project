@@ -126,7 +126,8 @@ class Method_RNN_Class(method, nn.Module):
             scheduler.step()
             
     def test(self, X):
-        y_pred = self.forward(X.to(self.deviceType))
+        prompts,length = X.getData()
+        y_pred = self.forward(prompts,length)
         return y_pred.max(1)[1]
             
     def run(self, trainData, testData):
@@ -136,7 +137,7 @@ class Method_RNN_Class(method, nn.Module):
         self.train(trainData)
         
         print('--start testing...')
-        return self.test(testData)
+        return (self.test(testData),testData.yLabels)
     
 class Method_RNN_Gen(method, nn.Module):
     def __init__(self, mName=None, mDescription=None, vocab_size=0, rnn_model=None, mDevice=None):
