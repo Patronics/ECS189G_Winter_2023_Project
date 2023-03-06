@@ -11,7 +11,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # -- configuration variables -- #
 useGPU = True
-model_type = "lstm"
+model_type = "rnn"
 
 #    uncomment whichever dataset you'd like to run the network on by default
 # DATASET_NAME = 'GEN'
