@@ -1,10 +1,11 @@
 **/__pycache__/
-result/*/MLP_prediction_result_*
+result/**
 codes
 data/stage*data
 data/generated_stage_*_data
 venv
 .idea
+.vscode
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,macos,windows,linux
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,macos,windows,linux
