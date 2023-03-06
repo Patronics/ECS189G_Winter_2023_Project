@@ -7,6 +7,7 @@ from nltk.stem.porter import PorterStemmer
 
 import nltk
 nltk.download('punkt')
+nltk.download('stopwords')
 
 os.chdir('../../data')
 if not os.path.exists("./generated_stage_4_data"):
