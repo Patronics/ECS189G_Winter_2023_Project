@@ -33,7 +33,11 @@ for line in text.splitlines()[1:]:
   #lines that start with subreddit names are not jokes
   if line.startswith('/r/'):
     continue
-  
+
+  # remove lines mentioning reddit
+  if 'reddit' in line:
+    continue
+
   # remove links
   if 'http' in line:
     #remove  links with [link formatting](http://example.com)
@@ -42,6 +46,9 @@ for line in text.splitlines()[1:]:
     line = re.sub(r'\(?https?:\/\/[a-zA-Z0-9\/.(&\?=\-;_]+\)?', '', line)
     #print(line)
 
+  # remove annotations/citations of format [annotation] 
+  line = re.sub(r'\[(.+?)\]', '', line)     
+  
   #remove mention of cross-posts
   if any(s in line for s in ['x-post','x post','xpost']):
     # print(line)
@@ -54,8 +61,10 @@ for line in text.splitlines()[1:]:
   
   tokens = word_tokenize(line)
 
-  # remove punctuation from each word
-  table = str.maketrans('', '', string.punctuation.replace('?','').replace('.',''))
+  # remove all punctuation from each word except for . ? -
+  allowed_punctuation = ['?', '.', '-']
+  table = str.maketrans('', '', string.punctuation.replace('.', '').replace('?', '').replace('-', ''))
+
   stripped = [w.translate(table) for w in tokens]
 
   # remove remaining tokens that are not alphabetic
@@ -65,9 +74,12 @@ for line in text.splitlines()[1:]:
   # stop_words = set(stopwords.words('english'))
   # words = [w for w in words if not w in stop_words]
 
-  clean_lines.append(stripped)
-  
+  # Remove empty strings
+  clean_lines.append([token for token in stripped if len(token)]) 
+
+# print(clean_lines)
 out = '\n'.join([' '.join(line) for line in clean_lines])
+# out = clean_lines
 
 print(out, file=outfile)
 print ("---- saved output to " + outfilepath+"  ----")
