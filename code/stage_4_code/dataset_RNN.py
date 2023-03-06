@@ -41,6 +41,9 @@ class Text_Dataset(dataset):
     def load_gen(self):
         print('loading ' + self.dataset_name + '...')
         #TODO: load the training and testing data into @self.data as one data structure
+        trainDir = self.dataset_source_folder_path + 'generated_stage_4_data/joke_data_clean'
+        trainLoader = generationWordLoader(trainDir)
+        self.data = {train: trainLoader}
 
 
         
@@ -105,3 +108,46 @@ class classificationWordLoader(nn.Module):
         yList = yShuffle.split(batchSize)
         lengthList = lengthShuffle.split(batchSize)
         return zip(xList,lengthList,yList)
+
+
+class generationWordLoader(nn.Module):
+    def __init__(self,filename):
+        super(generationWordLoader,self).__init__()
+        # load the file and put in the format in the sample code above
+        print(os.getcwd())
+        with open(filename) as df:
+            jokes = df.readlines()
+
+        # tokenizer and embedding setup
+        tokenizer = get_tokenizer('basic_english')
+        self.global_vectors = GloVe(name='6B',dim=50)
+        self.vocab = self.global_vectors.stoi
+        self.reverseVocab = self.global_vectors.itos
+        self.tokens = [tokenizer(x) for x in jokes]
+        self.tokens = np.array(self.tokens)
+        
+        self.lengths = []
+        for i in self.tokens:
+            self.lengths.append(len(i))
+        
+        max_words = max(self.lengths)
+        tokens = [token+[""] * (max_words-len(token))  if len(token)<max_words else token[:max_words] for token in self.tokens]
+        
+        self.x = torch.zeros(len(tokens),max_words,50)
+        for i in trange(len(tokens)):
+            self.x[i] = self.global_vectors.get_vecs_by_tokens(tokens[i])
+        self.lengths = torch.tensor(self.lengths)
+
+    def getData(self):
+        return self.x,self.lengths
+
+    def forward(self,batchSize):
+        promptList = torch.randperm(self.x.shape[0])
+        xShuffle = self.x[promptList]
+        lengthShuffle = self.lengths[promptList]
+        # split into batches
+        xList = xShuffle.split(batchSize)
+        lengthList = lengthShuffle.split(batchSize)
+        return zip(xList,lengthList,yList)
+
+
