@@ -210,7 +210,7 @@ class Method_RNN_Gen(method, nn.Module):
         progress = trange(self.max_epoch)
         for epoch in progress:
             loss = 0
-            for data, in dataLoader(self.batch_size):
+            for data, lengths in dataLoader(self.batch_size):
                 for i in range(0, data.shape[0]-3):
                     pred = self.forward(data[i:i+2])
                     loss += loss_function(pred, data[i:i+2])

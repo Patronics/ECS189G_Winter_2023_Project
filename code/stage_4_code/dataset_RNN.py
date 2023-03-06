@@ -43,7 +43,7 @@ class Text_Dataset(dataset):
         #TODO: load the training and testing data into @self.data as one data structure
         trainDir = self.dataset_source_folder_path + 'generated_stage_4_data/joke_data_clean'
         trainLoader = generationWordLoader(trainDir)
-        self.data = {train: trainLoader}
+        self.data = {'train': trainLoader, 'test':trainLoader} #TODO REMOVE OR CHANGE TEST FUNCTION
 
 
         
@@ -148,6 +148,6 @@ class generationWordLoader(nn.Module):
         # split into batches
         xList = xShuffle.split(batchSize)
         lengthList = lengthShuffle.split(batchSize)
-        return zip(xList,lengthList,yList)
+        return zip(xList,lengthList)
 
 
