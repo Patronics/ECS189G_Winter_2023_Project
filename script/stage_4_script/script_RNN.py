@@ -21,7 +21,12 @@ DATASET_NAME = 'GEN'
 if (len(sys.argv)==2):
     DATASET_NAME = sys.argv[1]
     print("detected command line argument '"+sys.argv[1]+"', attempting to use that dataset")
-
+    
+if (len(sys.argv)==3):
+    DATASET_NAME = sys.argv[1]
+    print("detected command line argument '"+sys.argv[1]+"', attempting to use that dataset")
+    model_type = sys.argv[2]
+    print("detected command line argument '"+sys.argv[2]+"', attempting to use that model type")
 #else:
 #    print("invalid dataset name provided, please choose from [ORL, MNIST, CIFAR]")
 #    sys.exit(1)
