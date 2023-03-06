@@ -188,9 +188,7 @@ class Method_RNN_Gen(method, nn.Module):
         
 
     def forward(self, data, hn):
-
         data, hn = self.rnn(data)
-
         # connect the last hidden layer in both directions to the fc layer 
         if self.bidirectional:
             data = torch.cat((hn[-2,:,:], hn[-1,:,:]), dim = 1)

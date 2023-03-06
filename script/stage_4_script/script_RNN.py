@@ -14,8 +14,8 @@ useGPU = True
 model_type = "rnn"
 
 #    uncomment whichever dataset you'd like to run the network on by default
-# DATASET_NAME = 'GEN'
-DATASET_NAME = 'Class'
+DATASET_NAME = 'GEN'
+# DATASET_NAME = 'Class'
 
 
 if (len(sys.argv)==2):
