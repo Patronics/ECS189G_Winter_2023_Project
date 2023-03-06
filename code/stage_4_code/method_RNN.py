@@ -39,7 +39,7 @@ class Method_RNN_Class(method, nn.Module):
     learning_rate = 1e-3
     batch_size = 3
     
-    embedding_dim = 64
+    embedding_dim = 300
     max_words = 32
     hidden_layers = 2
     bidirectional = False
@@ -93,7 +93,7 @@ class Method_RNN_Class(method, nn.Module):
         if self.bidirectional:
             data = torch.cat((hn[-2,:,:], hn[-1,:,:]), dim = 1)
         
-        data = torch.squeeze(data, 1)
+        data = torch.sum(data,1)
     
         data = self.fc(data)
         return F.sigmoid(data)
@@ -105,14 +105,11 @@ class Method_RNN_Class(method, nn.Module):
         loss_function = nn.BCELoss()
 
         #-- Mini-Batch GD loop --
-        progress = range(self.max_epoch)
+        progress = trange(self.max_epoch)
         for epoch in progress:
-            for data, labels in dataLoader(self.batch_size):
-                lengths = []
-                for i in data:
-                    lengths.append(i.shape[0])
+            for data, lengths, labels in dataLoader(self.batch_size):
                 pred = self.forward(data, lengths).squeeze()
-                
+
                 optimizer.zero_grad()
                 loss = loss_function(pred, labels)
                 
@@ -124,7 +121,7 @@ class Method_RNN_Class(method, nn.Module):
                 optimizer.step()
 
                 progress.set_postfix_str(f'Loss: {float(loss.cpu().detach().numpy()):7.6f}, lrate: {scheduler.get_last_lr()[0]:2.6f}', refresh=True)
-                print(f'{float(loss.cpu().detach().numpy()):7.6f}')
+                #print(f'{float(loss.cpu().detach().numpy()):7.6f}')
             
             scheduler.step()
             
