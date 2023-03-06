@@ -73,50 +73,49 @@ class classificationWordLoader(nn.Module):
         # a list of strings, please.
         # tokenizer and embedding setup
         tokenizer = get_tokenizer('basic_english')
-        global_vectors = GloVe()
-        self.x = []
-        for i in testData:
-            self.x.append(global_vectors.get_vecs_by_tokens(tokenizer(i), lower_case_backup=True))
-        # label loading:
-        # load labels here 
-        # format: [0,1] or [1,0], as floats for BCE
-        # temp code:
+        self.global_vectors = GloVe()
+        self.vocab = self.global_vectors.stoi
+        self.reverseVocab = self.global_vectors.itos
+        self.tokens = [tokenizer(x) for x in testData]
+        self.tokens = np.array(self.tokens)
         self.yTrue = torch.tensor([[0,1],[1,0],[0,1],[1,0],[0,1],[1,0]],dtype=torch.float)
-        self.x = np.array(self.x)
+        
 
     def forward(self,batchSize):
-        # bucketIterator
-        # sort
+        #sort
         lengths = []
-        for i in self.x:
-            lengths.append(i.shape[0])
+        for i in self.tokens:
+            lengths.append(len(i))
         lengths = np.array(lengths)
         sortOrder = np.argsort(lengths)
         sortedLengths = lengths[sortOrder]
-        sortedX = self.x[sortOrder]
+        sortedTokens = self.tokens[sortOrder]
         sortedY = self.yTrue[sortOrder]
-        # split
-        xList = np.array(np.array_split(sortedX,[batchSize]))
+        #split
+        tokenList = np.array(np.array_split(sortedTokens,[batchSize]))
         yList = np.array(sortedY.split(batchSize))
+        lengthList = np.array(np.array_split(sortedLengths,[batchSize]))
+        #pad 
+        tensorList = []
+        for i in range(tokenList.shape[0]):
+            max_words = max(lengthList[i])
+            tokenList[i] = [tokens+[""] * (max_words-len(tokens))  if len(tokens)<max_words else tokens[:max_words] for tokens in tokenList[i]]
+            for j in range(len(tokenList[i])):
+                tokenList[i,j] = self.global_vectors.get_vecs_by_tokens(tokenList[i,j])
+            tensorList.append(torch.stack(tokenList[i].tolist()))
         # shuffle
-        shuffleIndex = np.random.permutation(xList.shape[0])
-        xListShuffled = xList[shuffleIndex]
+        tensorList = np.array(tensorList)
+        shuffleIndex = np.random.permutation(tensorList.shape[0])
+        xListShuffled = tensorList[shuffleIndex]
         yListShuffled = yList[shuffleIndex]
+        lengthList = lengthList[shuffleIndex]
         # little shuffle
         for i in range(xListShuffled.shape[0]):
-            shuffleIndex = np.random.permutation(xList[i].shape[0])
-            xListShuffled[i] = xList[i][shuffleIndex]
+            shuffleIndex = np.random.permutation(xListShuffled[i].shape[0])
+            xListShuffled[i] = xListShuffled[i][shuffleIndex]
             yListShuffled[i] = yList[i][shuffleIndex]
-        return zip(xListShuffled,yListShuffled)
-        # standard randomization
-        # # randomize:
-        # shuffleIndex = np.random.permutation(self.x.shape[0])
-        # xShuffled = self.x[shuffleIndex]
-        # yShuffled = self.yTrue[shuffleIndex]
-        # # batch:
-        # xList = np.array(np.array_split(xShuffled,[batchSize]))
-        # yList = np.array(yShuffled.split(batchSize))
-        # return zip(xList,yList)
+            lengthList[i] = lengthList[i][shuffleIndex]
+        return zip(xListShuffled,lengthList,yListShuffled)
 
         
         
@@ -127,6 +126,3 @@ class classificationWordLoader(nn.Module):
         
         
         
-        
-        
-    
