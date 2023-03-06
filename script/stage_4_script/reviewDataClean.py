@@ -24,6 +24,7 @@ if not os.path.exists("./generated_stage_4_data"):
 
 # load data
 folder = 'test'
+#folder = 'train'
 
 outfilepath = os.getcwd() + '/generated_stage_4_data/review_data_clean_' + folder
 outfile = open(outfilepath, 'w')

@@ -97,7 +97,7 @@ class Method_RNN_Class(method, nn.Module):
         data = torch.sum(data,1)
     
         data = self.fc(data)
-        return F.sigmoid(data).cpu()
+        return torch.sigmoid(data).cpu()
     
     def train(self, dataLoader):
         #-- Tool Init --
