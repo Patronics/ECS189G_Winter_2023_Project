@@ -24,6 +24,7 @@ import torch.utils.data as Tdata
 from torch import nn
 import torch.optim as optim
 import torch
+import numpy as np
 
 try:
     from tqdm import trange
@@ -145,50 +146,54 @@ class Method_RNN_Gen(method, nn.Module):
     max_epoch = 20
     learning_rate = 1e-3
     batch_size = 1
+    windowSize = 3
     
-    # embedding_dim = 300
-    max_words = 3
-    hidden_layers = 2
+    embedding_dim = 50
+    max_words = 50
+    hidden_layers = 3
     bidirectional = False
     dropout = 0.2
     
-    def __init__(self, mName=None, mDescription=None, rnn_model=None, mDevice=None):
+    def __init__(self, mName=None, mDescription=None, rnn_model=None, mDevice=None,vocab_size=4569):
         method.__init__(self, mName, mDescription)
         nn.Module.__init__(self)
         self.deviceType = mDevice
         
         #-- Embedding Layer Definition --
-        # self.embedding = nn.Embedding(vocab_size, embedding_dim=self.embedding_dim)
+        self.embedding = nn.Embedding(vocab_size, embedding_dim=self.embedding_dim).to(self.deviceType)
         
         #-- RNN Architecture Definition --
         if rnn_model == "lstm":
-            self.rnn = nn.LSTM(3, 
+            self.rnn = nn.LSTM(self.embedding_dim, 
                                hidden_size=self.max_words, 
                                num_layers=self.hidden_layers, 
                                bidirectional=self.bidirectional, 
                                dropout=self.dropout,
-                               batch_first=True)
+                               batch_first=True).to(self.deviceType)
         elif rnn_model == "GRU":
-            self.rnn = nn.GRU(3, 
+            self.rnn = nn.GRU(self.embedding_dim, 
                               hidden_size=self.max_words, 
                               num_layers=self.hidden_layers, 
                               bidirectional=self.bidirectional, 
                               dropout=self.dropout,
-                              batch_first=True)
+                              batch_first=True).to(self.deviceType)
         else:
-            self.rnn = nn.RNN(3, 
+            self.rnn = nn.RNN(self.embedding_dim, 
                               hidden_size=self.max_words, 
                               num_layers=self.hidden_layers, 
                               bidirectional=self.bidirectional, 
                               dropout=self.dropout,
-                              batch_first=True)
+                              batch_first=True).to(self.deviceType)
         
         #-- FC Output Layer Definition --
-        self.fc = nn.Linear(self.max_words * (2 if self.bidirectional else 1), 2)
+        self.fc = nn.Linear(self.max_words * (2 if self.bidirectional else 1), vocab_size).to(self.deviceType)
         
 
-    def forward(self, data, hn):
-        data, hn = self.rnn(data)
+    def forward(self, data,prevState):
+        data = data.to(self.deviceType)
+        data = self.embedding(data)
+        data, hn = self.rnn(data,prevState.to(self.deviceType))
+
         # connect the last hidden layer in both directions to the fc layer 
         if self.bidirectional:
             data = torch.cat((hn[-2,:,:], hn[-1,:,:]), dim = 1)
@@ -196,7 +201,9 @@ class Method_RNN_Gen(method, nn.Module):
         # data = torch.sum(data,1)
     
         data = self.fc(data)
-        return F.relu(data), hn
+        return data.cpu(), hn.cpu()
+    def initStates(self, windowSize):
+        return torch.zeros(self.hidden_layers, self.embedding_dim)
     
     def train(self, dataLoader):
         #-- Tool Init --
@@ -204,21 +211,25 @@ class Method_RNN_Gen(method, nn.Module):
         scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.85)
         loss_function = nn.CrossEntropyLoss()
 
-        #-- Mini-Batch GD loop --
+        #-- SGD loop --
         progress = trange(self.max_epoch)
         for epoch in progress:
-            loss = 0
-            for data, lengths in dataLoader(self.batch_size):
-                for i in range(0, data.shape[0]-3):
-                    pred = self.forward(data[i:i+2])
-                    loss += loss_function(pred, data[i:i+2])
-                    
+            prevState = self.initStates(self.windowSize)
+            for data in dataLoader(): # data: 1 sentence, tensor with variable length
+                losses = []
+                # sliding window training here.
+                for i in range(0, data.shape[0]-self.windowSize):
+                    pred,prevState = self.forward(data[i:i+self.windowSize],prevState)
+                    prevState= prevState.detach()
+                    losses.append(loss_function(pred, data[i+1:i+1+self.windowSize]))
                 optimizer.zero_grad()
-                
                 # Early Stop
-                if loss <= 0.001:
-                    return
-                
+                # if loss <= 0.001:
+                #     return
+                if data.shape[0]<=3:
+                    continue
+                losses = torch.stack(losses)
+                loss = torch.sum(losses)
                 loss.backward()
                 optimizer.step()
 
@@ -228,8 +239,23 @@ class Method_RNN_Gen(method, nn.Module):
             scheduler.step()
             
     def test(self, data):
-        prompts,length = data.getData()
-        y_pred = self.forward(prompts,length)
+        input = 'what did the'
+        words = input.split(' ')
+        prevState = self.initStates(3)
+        for i in range(0,5):
+            x = torch.tensor([data.reverseVocab[w] for w in words[i:]])
+            y_pred,prevState = self(x,prevState)
+
+            last_word_logits = y_pred[-1]
+            p = torch.nn.functional.softmax(last_word_logits, dim=0).detach().numpy()
+            word_index = np.random.choice(len(last_word_logits), p=p)
+            words.append(data.vocab[word_index])
+        
+        print(words)
+
+        prompts = data.getData()
+
+        y_pred = self.forward(prompts)
         return y_pred.max(1)[1]
             
     def run(self, trainData, testData):

@@ -25,6 +25,7 @@ from torchtext.data import get_tokenizer
 from torchtext.vocab import GloVe
 import pandas as pd
 from tqdm import trange
+from collections import Counter
 
 
 class Text_Dataset(dataset):
@@ -121,34 +122,29 @@ class generationWordLoader(nn.Module):
 
         # tokenizer and embedding setup
         tokenizer = get_tokenizer('basic_english')
-        self.global_vectors = GloVe(name='6B',dim=50)
-        self.vocab = self.global_vectors.stoi
-        self.reverseVocab = self.global_vectors.itos
-        self.tokens = [tokenizer(x) for x in jokes]
+        self.tokens = [np.array(tokenizer(x)) for x in jokes]
+        self.tokens = self.tokens[:100]
+        wordBag = np.concatenate(self.tokens)
         self.tokens = np.array(self.tokens, dtype=object)
         
-        self.lengths = []
-        for i in self.tokens:
-            self.lengths.append(len(i))
+        wordCounter = Counter(wordBag)
+        self.uniqueWordList = sorted(wordCounter, key=wordCounter.get,reverse=True)
+
+        self.vocab = {index:word for index, word in enumerate(self.uniqueWordList)}
+        self.reverseVocab = {word:index for index, word in enumerate(self.uniqueWordList)}
+
+        self.indicies = []
+        for i in range(self.tokens.shape[0]):
+            self.indicies.append([self.reverseVocab[token] for token in self.tokens[i]])
         
-        max_words = max(self.lengths)
-        tokens = [token+[""] * (max_words-len(token))  if len(token)<max_words else token[:max_words] for token in self.tokens]
-        
-        self.x = torch.zeros(len(tokens),max_words,50)
-        for i in trange(len(tokens)):
-            self.x[i] = self.global_vectors.get_vecs_by_tokens(tokens[i])
-        self.lengths = torch.tensor(self.lengths)
+        self.indicies = [torch.tensor(data) for data in self.indicies]
+
+        print()
 
     def getData(self):
-        return self.x,self.lengths
+        return self.indicies
 
-    def forward(self,batchSize):
-        promptList = torch.randperm(self.x.shape[0])
-        xShuffle = self.x[promptList]
-        lengthShuffle = self.lengths[promptList]
-        # split into batches
-        xList = xShuffle.split(batchSize)
-        lengthList = lengthShuffle.split(batchSize)
-        return zip(xList,lengthList)
+    def forward(self):
+        return self.indicies
 
 
