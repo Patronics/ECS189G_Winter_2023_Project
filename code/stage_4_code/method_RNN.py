@@ -140,7 +140,105 @@ class Method_RNN_Class(method, nn.Module):
         return (self.test(testData),testData.yLabels)
     
 class Method_RNN_Gen(method, nn.Module):
-    def __init__(self, mName=None, mDescription=None, vocab_size=0, rnn_model=None, mDevice=None):
+     #-- Hyper Variables --
+    max_epoch = 20
+    learning_rate = 1e-3
+    batch_size = 1
+    
+    # embedding_dim = 300
+    max_words = 3
+    hidden_layers = 2
+    bidirectional = False
+    dropout = 0.2
+    
+    def __init__(self, mName=None, mDescription=None, rnn_model=None, mDevice=None):
         method.__init__(self, mName, mDescription)
         nn.Module.__init__(self)
+        self.deviceType = mDevice
+        
+        #-- Embedding Layer Definition --
+        # self.embedding = nn.Embedding(vocab_size, embedding_dim=self.embedding_dim)
+        
+        #-- RNN Architecture Definition --
+        if rnn_model == "lstm":
+            self.rnn = nn.LSTM(3, 
+                               hidden_size=self.max_words, 
+                               num_layers=self.hidden_layers, 
+                               bidirectional=self.bidirectional, 
+                               dropout=self.dropout,
+                               batch_first=True)
+        elif rnn_model == "GRU":
+            self.rnn = nn.GRU(3, 
+                              hidden_size=self.max_words, 
+                              num_layers=self.hidden_layers, 
+                              bidirectional=self.bidirectional, 
+                              dropout=self.dropout,
+                              batch_first=True)
+        else:
+            self.rnn = nn.RNN(3, 
+                              hidden_size=self.max_words, 
+                              num_layers=self.hidden_layers, 
+                              bidirectional=self.bidirectional, 
+                              dropout=self.dropout,
+                              batch_first=True)
+        
+        #-- FC Output Layer Definition --
+        self.fc = nn.Linear(self.max_words * (2 if self.bidirectional else 1), 2)
+        
+
+    def forward(self, data, hn):
+
+        data, hn = self.rnn(data)
+
+        # connect the last hidden layer in both directions to the fc layer 
+        if self.bidirectional:
+            data = torch.cat((hn[-2,:,:], hn[-1,:,:]), dim = 1)
+        
+        # data = torch.sum(data,1)
+    
+        data = self.fc(data)
+        return F.relu(data), hn
+    
+    def train(self, dataLoader):
+        #-- Tool Init --
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=1e-6, amsgrad=False)
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.85)
+        loss_function = nn.CrossEntropyLoss()
+
+        #-- Mini-Batch GD loop --
+        progress = trange(self.max_epoch)
+        for epoch in progress:
+            loss = 0
+            for data, in dataLoader(self.batch_size):
+                for i in range(0, data.shape[0]-3):
+                    pred = self.forward(data[i:i+2])
+                    loss += loss_function(pred, data[i:i+2])
+                    
+                optimizer.zero_grad()
+                
+                # Early Stop
+                if loss <= 0.001:
+                    return
+                
+                loss.backward()
+                optimizer.step()
+
+                progress.set_postfix_str(f'Loss: {float(loss.cpu().detach().numpy()):7.6f}, lrate: {scheduler.get_last_lr()[0]:2.6f}', refresh=True)
+                #print(f'{float(loss.cpu().detach().numpy()):7.6f}')
+            
+            scheduler.step()
+            
+    def test(self, data):
+        prompts,length = data.getData()
+        y_pred = self.forward(prompts,length)
+        return y_pred.max(1)[1]
+            
+    def run(self, trainData, testData):
+        print('method running...')
+        print('--start training...')
+        
+        self.train(trainData)
+        
+        print('--start testing...')
+        return (self.test(testData),testData.yLabels)
         
