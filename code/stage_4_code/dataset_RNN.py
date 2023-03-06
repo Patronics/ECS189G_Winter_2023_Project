@@ -130,21 +130,6 @@ class generationWordLoader(nn.Module):
         self.lengths = []
         for i in self.tokens:
             self.lengths.append(len(i))
-
-        specialTokens = ['<unk>', '<pad>','<EOS>', '<eoj>']
-        vocab = torchtext.vocab.build_vocab_from_iterator(self.tokens, min_freq=1, specials=specialTokens)
-        unk_index = vocab['<unk>']
-        vocab.set_default_index(unk_index)
-
-        def convertToIndicies(tokens,vocab):
-            return [vocab[token] for token in tokens]
-        
-        indicies = [convertToIndicies(tokens,vocab) for tokens in self.tokens]
-
-        
-
-
-
         
         max_words = max(self.lengths)
         tokens = [token+[""] * (max_words-len(token))  if len(token)<max_words else token[:max_words] for token in self.tokens]
