@@ -39,7 +39,7 @@ class Method_RNN_Class(method, nn.Module):
     learning_rate = 1e-3
     batch_size = 3
     
-    embedding_dim = 300
+    embedding_dim = 50
     max_words = 32
     hidden_layers = 2
     bidirectional = False

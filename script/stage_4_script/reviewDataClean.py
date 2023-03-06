@@ -1,3 +1,12 @@
+import sys
+import os
+
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+
+sys.path.insert(0, ROOT_DIR)
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+
 import os
 import re
 import string
@@ -7,13 +16,14 @@ from nltk.stem.porter import PorterStemmer
 
 import nltk
 nltk.download('punkt')
+nltk.download('stopwords')
 
 os.chdir('../../data')
 if not os.path.exists("./generated_stage_4_data"):
 	os.makedirs("./generated_stage_4_data")
 
 # load data
-folder = 'train'
+folder = 'test'
 
 outfilepath = os.getcwd() + '/generated_stage_4_data/review_data_clean_' + folder
 outfile = open(outfilepath, 'w')
