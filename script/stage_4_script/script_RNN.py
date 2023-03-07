@@ -12,6 +12,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 # -- configuration variables -- #
 useGPU = True
 model_type = "rnn"
+# GEN IS RNN ONLY
 
 #    uncomment whichever dataset you'd like to run the network on by default
 DATASET_NAME = 'GEN'
@@ -83,7 +84,7 @@ if 1:
     print('************ Start ************')
     setting.prepare(dataset, method, result, evaluate)
     setting.print_setup_summary()
-    mean_score = setting.load_run_save_evaluate()
+    mean_score = setting.load_run_save_evaluate(DATASET_NAME)
     print('************ Overall Performance ************')
     print('RNN Accuracy: ' + str(mean_score))
     print('************ Finish ************')

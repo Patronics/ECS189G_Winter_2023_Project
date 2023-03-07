@@ -20,10 +20,13 @@ from codes.base_class.setting import setting
 
 #-----------------------------------------------------
 class RNN_Trainer(setting):
-    def load_run_save_evaluate(self):
+    def load_run_save_evaluate(self,datasetName):
         self.dataset.load()
         self.method.data = self.dataset.data
         result = self.method.run(self.dataset.data["train"], self.dataset.data["test"])
+
+        if datasetName == 'GEN':
+            return 
         
         self.result.data = result[0].cpu().detach().numpy()
         self.result.save()

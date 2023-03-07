@@ -44,7 +44,8 @@ class Text_Dataset(dataset):
         print('loading ' + self.dataset_name + '...')
         #TODO: load the training and testing data into @self.data as one data structure
         trainDir = self.dataset_source_folder_path + 'generated_stage_4_data/joke_data_clean'
-        trainLoader = generationWordLoader(trainDir)
+        windowSize = 3
+        trainLoader = generationDataset(trainDir,windowSize)
         self.data = {'train': trainLoader, 'test':trainLoader} #TODO REMOVE OR CHANGE TEST FUNCTION
 
 
@@ -111,40 +112,65 @@ class classificationWordLoader(nn.Module):
         lengthList = lengthShuffle.split(batchSize)
         return zip(xList,lengthList,yList)
 
-
-class generationWordLoader(nn.Module):
-    def __init__(self,filename):
-        super(generationWordLoader,self).__init__()
-        # load the file and put in the format in the sample code above
+class generationDataset(torch.utils.data.Dataset):
+    def __init__(self,fileDir,windowSize):
+        self.windowSize = windowSize
+        # load:
         print(os.getcwd())
-        with open(filename) as df:
+        with open(fileDir) as df:
             jokes = df.readlines()
-
-        # tokenizer and embedding setup
+        # tokenize and combine into one long list of tokens
         tokenizer = get_tokenizer('basic_english')
         self.tokens = [np.array(tokenizer(x)) for x in jokes]
-        self.tokens = self.tokens[:100]
-        wordBag = np.concatenate(self.tokens)
-        self.tokens = np.array(self.tokens, dtype=object)
+        #self.tokens = self.tokens[:100]
+        self.tokens = np.concatenate(self.tokens)
+        tokenCounter = Counter(self.tokens)
+        self.uniqueTokenList = sorted(tokenCounter, key=tokenCounter.get,reverse=True)
+        self.vocab = {index:word for index, word in enumerate(self.uniqueTokenList)}
+        self.reverseVocab = {word:index for index, word in enumerate(self.uniqueTokenList)}
+        self.indicies = [self.reverseVocab[token] for token in self.tokens]
+
+    def __len__(self):
+        return len(self.indicies) - self.windowSize
+    def __getitem__(self, index):
+        return (
+            torch.tensor(self.indicies[index:index+self.windowSize]),
+            torch.tensor(self.indicies[index+self.windowSize]),
+        )
+
+# class generationWordLoader(nn.Module):
+#     def __init__(self,filename):
+#         super(generationWordLoader,self).__init__()
+#         # load the file and put in the format in the sample code above
+#         print(os.getcwd())
+#         with open(filename) as df:
+#             jokes = df.readlines()
+
+#         # tokenizer and embedding setup
+#         tokenizer = get_tokenizer('basic_english')
+#         self.tokens = [np.array(tokenizer(x)) for x in jokes]
+#         self.tokens = self.tokens[:100]
+#         wordBag = np.concatenate(self.tokens)
+#         self.tokens = np.array(self.tokens, dtype=object)
         
-        wordCounter = Counter(wordBag)
-        self.uniqueWordList = sorted(wordCounter, key=wordCounter.get,reverse=True)
+#         wordCounter = Counter(wordBag)
+#         self.uniqueWordList = sorted(wordCounter, key=wordCounter.get,reverse=True)
 
-        self.vocab = {index:word for index, word in enumerate(self.uniqueWordList)}
-        self.reverseVocab = {word:index for index, word in enumerate(self.uniqueWordList)}
+#         self.vocab = {index:word for index, word in enumerate(self.uniqueWordList)}
+#         self.reverseVocab = {word:index for index, word in enumerate(self.uniqueWordList)}
 
-        self.indicies = []
-        for i in range(self.tokens.shape[0]):
-            self.indicies.append([self.reverseVocab[token] for token in self.tokens[i]])
+#         self.indicies = []
+#         for i in range(self.tokens.shape[0]):
+#             self.indicies.append([self.reverseVocab[token] for token in self.tokens[i]])
         
-        self.indicies = [torch.tensor(data) for data in self.indicies]
+#         self.indicies = [torch.tensor(data) for data in self.indicies]
 
-        print()
+#         print()
 
-    def getData(self):
-        return self.indicies
+#     def getData(self):
+#         return self.indicies
 
-    def forward(self):
-        return self.indicies
+#     def forward(self):
+#         return self.indicies
 
 
