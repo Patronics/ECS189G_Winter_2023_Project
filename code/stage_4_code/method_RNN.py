@@ -225,16 +225,16 @@ class Method_RNN_Gen(method, nn.Module):
             
     def test(self, data):
         input = 'what did the'
-        words = input.split(' ')
+        tokens = input.split(' ')
         prevState = self.initStates(3)
         for i in range(0,100):
-            x = torch.tensor([[data.reverseVocab[w] for w in words[i:]]])
+            x = torch.tensor([[data.reverseVocab[token] for token in tokens[i:]]])
             y_pred,prevState = self(x,prevState)
-            last_word_logits = y_pred[0]
-            p = torch.nn.functional.softmax(last_word_logits, dim=0).detach().numpy()
-            word_index = np.random.choice(len(last_word_logits), p=p)
-            words.append(data.vocab[word_index])
-        print(words)
+            lastWordPrediction = y_pred[0]
+            p = torch.nn.functional.softmax(lastWordPrediction, dim=0).detach().numpy()
+            word_index = np.random.choice(len(lastWordPrediction), p=p)
+            tokens.append(data.vocab[word_index])
+        print(tokens)
         # prompts = data.getData()
 
         # y_pred = self.forward(prompts)
