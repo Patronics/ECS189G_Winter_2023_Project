@@ -12,7 +12,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 # -- configuration variables -- #
 useGPU = True
 #  uncomment or edit to whichever dataset you'd like to run the network on by default
-DATASET_NAME = 'Cora' #choose from 'Cora', 'Citeseer', or 'Pubmed'
+DATASET_NAME = 'cora' #choose from 'Cora', 'citeseer', or 'pubmed'
 MODEL_TYPE = "GCN"
 
 
@@ -33,9 +33,9 @@ if (len(sys.argv)==3):
 
 from codes.stage_5_code.Dataset_Loader_Node_Classification import Dataset_Loader
 from codes.stage_5_code.method_GCN import Method_GCN_Class
-from codes.stage_5_code.setting_GCN import GCN_Trainer
+#from codes.stage_5_code.setting_GCN import GCN_Trainer
 from codes.stage_5_code.evaluate_GCN import Evaluate_GCN
-from codes.stage_5_code.result_GCN import Results_GCN
+#from codes.stage_5_code.result_GCN import Results_GCN
 import numpy as np
 import torch
 
