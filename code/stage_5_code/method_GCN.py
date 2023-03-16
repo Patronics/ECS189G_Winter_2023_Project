@@ -89,13 +89,3 @@ class Method_GCN_Class(nn.Module):
             loss.backward()
             optimizer.step()
             progress.set_postfix_str(f'Loss: {float(loss.cpu().detach().numpy()):7.6f}', refresh=True)
-
-    def test_model(self,dataset):
-        test_IDX = dataset['train_test_val']['idx_test']
-        x = dataset['graph']['X']
-        y = dataset['graph']['y']
-        adj = dataset['graph']['utility']['A']
-        outputs = self(x,adj)
-        _,outputLabels = torch.max(outputs.data,1)
-        print(classification_report(y[test_IDX].cpu().detach().numpy(), outputLabels[test_IDX].cpu().detach().numpy()))
-        return

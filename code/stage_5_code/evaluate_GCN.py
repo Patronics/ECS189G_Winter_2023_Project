@@ -34,6 +34,12 @@ class Evaluate_GCN(evaluate):
         return accuracy_score(dataTrue.cpu(), dataPred.cpu())
 
     def classificationReport(self):
-        dataPred = self.data[0]
-        dataTrue = self.data[1]
-        print(classification_report(dataTrue.cpu().numpy(), dataPred.cpu().numpy()))
+        test_IDX = dataset['train_test_val']['idx_test']
+        x = dataset['graph']['X']
+        y = dataset['graph']['y']
+        adj = dataset['graph']['utility']['A']
+        outputs = self(x,adj)
+        _,outputLabels = torch.max(outputs.data,1)
+        dataPred = outputLabels[test_IDX].cpu().detach().numpy())
+        dataTrue = classification_report(y[test_IDX].cpu().detach().numpy()
+        print(dataTrue, dataPred)
