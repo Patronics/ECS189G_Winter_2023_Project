@@ -14,6 +14,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from tqdm import trange
 from codes.stage_5_code.Dataset_Loader_Node_Classification import Dataset_Loader
+from sklearn.metrics import accuracy_score,classification_report
 DATASET_NAME = 'cora'
 dataset_loader = Dataset_Loader(DATASET_NAME, '')
 dataset_loader.dataset_name = DATASET_NAME
@@ -70,16 +71,29 @@ class testNet(nn.Module):
         optimizer = torch.optim.Adam(self.parameters(),lr=lr,weight_decay=5e-4)
         criterion = torch.nn.CrossEntropyLoss()
         self.train()
+
+        train_IDX = dataset['train_test_val']['idx_train']
+        x = dataset['graph']['X']
+        y = dataset['graph']['y']
+        adj = dataset['graph']['utility']['A']
         progress = trange(epochs)
         for epoch in progress:
-            outputs = self(dataset['graph']['X'],dataset['graph']['utility']['A'])
-            loss = criterion(outputs,dataset['graph']['y'])
+            outputs = self(x,adj)
+            loss = criterion(outputs[train_IDX],y[train_IDX])
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
             progress.set_postfix_str(f'Loss: {float(loss.cpu().detach().numpy()):7.6f}', refresh=True)
-        
-    
+
+    def test_model(self,dataset):
+        test_IDX = dataset['train_test_val']['idx_test']
+        x = dataset['graph']['X']
+        y = dataset['graph']['y']
+        adj = dataset['graph']['utility']['A']
+        outputs = self(x,adj)
+        _,outputLabels = torch.max(outputs.data,1)
+        print(classification_report(y[test_IDX].cpu().detach().numpy(), outputLabels[test_IDX].cpu().detach().numpy()))
+        return
 print()
 
 #---------------------------------------------------
@@ -87,4 +101,6 @@ print()
 model = testNet(torch.device('cuda')).to('cuda')
 
 model.train_model(dataset)
+
+model.test_model(dataset)
 
