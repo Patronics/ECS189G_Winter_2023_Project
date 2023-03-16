@@ -15,12 +15,16 @@ import torch.nn.functional as F
 from tqdm import trange
 from codes.stage_5_code.Dataset_Loader_Node_Classification import Dataset_Loader
 from sklearn.metrics import accuracy_score,classification_report
-DATASET_NAME = 'cora'
+DATASET_NAME = 'pubmed'
 dataset_loader = Dataset_Loader(DATASET_NAME, '')
 dataset_loader.dataset_name = DATASET_NAME
 dataset_loader.dataset_source_file_name = DATASET_NAME #not used
 dataset_loader.dataset_source_folder_path = f'../../data/stage_5_data/{DATASET_NAME}'
 dataset = dataset_loader.load()
+
+in_features = 500
+hidden_dim = 16
+out_features = 3
 
 print()
 
@@ -47,13 +51,11 @@ class testNet(nn.Module):
         if bias is not None:
             output=output+bias
         return output
-    def __init__(self,deviceType):
+    def __init__(self,deviceType, in_features, hidden_dim, out_features,dropout):
         super(testNet,self).__init__()
         self.deviceType = deviceType
-        in_features = 1433
-        hidden_dim = 16
-        out_features = 7
-        self.dropout = 0.1
+
+        self.dropout = dropout
         
         self.gc1_weight, self.gc1_bias = self.init_params(in_features, hidden_dim)
         self.gc2_weight, self.gc2_bias = self.init_params(hidden_dim, out_features)
@@ -98,7 +100,8 @@ print()
 
 #---------------------------------------------------
 
-model = testNet(torch.device('cuda')).to('cuda')
+
+model = testNet(torch.device('cuda'),in_features,hidden_dim,out_features,0.1).to('cuda')
 
 model.train_model(dataset)
 
