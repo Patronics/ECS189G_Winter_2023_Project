@@ -15,7 +15,7 @@ sys.path.insert(0, ROOT_DIR)
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 # -----------------------
-from codes.stage_5_code.evaluate_RNN import Evaluate_RNN
+from codes.stage_5_code.evaluate_GCN import Evaluate_GCN
 from codes.base_class.method import method
 import torch.nn.functional as F
 #from torchtext.data import BucketIterator

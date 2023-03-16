@@ -33,9 +33,9 @@ if (len(sys.argv)==3):
 
 from codes.stage_5_code.Dataset_Loader_Node_Classification import Dataset_Loader
 from codes.stage_5_code.method_GCN import Method_GCN_Class
-#from codes.stage_5_code.setting_GCN import GCN_Trainer
+from codes.stage_5_code.setting_GCN import GCN_Trainer
 from codes.stage_5_code.evaluate_GCN import Evaluate_GCN
-#from codes.stage_5_code.result_GCN import Results_GCN
+from codes.stage_5_code.result_GCN import Results_GCN
 import numpy as np
 import torch
 
@@ -58,19 +58,19 @@ if 1:
 
     #---- Object Initialization ----
 
-    dataset_loader = Dataset_Loader(DATASET_NAME, '')
+    dataset = Dataset_Loader(DATASET_NAME, '')
     #dataset = dataset_loader.load() #done in Setting_GCN
     dataset.dataset_source_file_name = DATASET_NAME #not used
     dataset.dataset_source_folder_path = '../../data/'
-    method = Method_GCN_Class('GCN', '' ,mDevice=device)
+    method = Method_GCN_Class('GCN', '' ,deviceType=device)
 
-    result = Results_RNN('Saver', '')
-    result.result_destination_folder_path = '../../result/stage_5_result/RNN_'
+    result = Results_GCN('Saver', '')
+    result.result_destination_folder_path = '../../result/stage_5_result/GCN_'
     result.result_destination_file_name = 'prediction_result-'+DATASET_NAME
     
     evaluate = Evaluate_GCN('accuracy', '')
     
-    setting = RNN_Trainer(f'RNN {DATASET_NAME} trainer', '')
+    setting = GCN_Trainer(f'GCN {DATASET_NAME} trainer', '')
     
     #---- Running ----
     print('************ Start ************')

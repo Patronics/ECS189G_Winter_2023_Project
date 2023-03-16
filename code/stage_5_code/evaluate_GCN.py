@@ -40,6 +40,6 @@ class Evaluate_GCN(evaluate):
         adj = dataset['graph']['utility']['A']
         outputs = self(x,adj)
         _,outputLabels = torch.max(outputs.data,1)
-        dataPred = outputLabels[test_IDX].cpu().detach().numpy())
-        dataTrue = classification_report(y[test_IDX].cpu().detach().numpy()
-        print(dataTrue, dataPred)
+        dataPred = outputLabels[test_IDX].cpu().detach().numpy()
+        dataTrue = y[test_IDX].cpu().detach().numpy()
+        print(classification_report(dataTrue, dataPred))
