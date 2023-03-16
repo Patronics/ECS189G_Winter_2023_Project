@@ -20,7 +20,7 @@ from codes.base_class.evaluate import evaluate
 from sklearn.metrics import accuracy_score,classification_report
 
 
-class Evaluate_RNN(evaluate):
+class Evaluate_GCN(evaluate):
     
     def __init__(self, eName=None, eDescription=None):
         self.evaluate_name = eName

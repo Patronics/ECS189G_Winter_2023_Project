@@ -31,11 +31,11 @@ if (len(sys.argv)==3):
 #    sys.exit(1)
 # -----------------------
 
-from codes.stage_5_code.Dataset_Loader_Node_Classification import Text_Dataset
-from codes.stage_4_code.method_RNN import Method_RNN_Class, Method_RNN_Gen
-from codes.stage_4_code.setting_RNN import RNN_Trainer
-from codes.stage_4_code.evaluate_RNN import Evaluate_RNN
-from codes.stage_4_code.result_RNN import Results_RNN
+from codes.stage_5_code.Dataset_Loader_Node_Classification import Dataset_Loader
+from codes.stage_5_code.method_GCN import Method_GCN_Class
+from codes.stage_5_code.setting_GCN import GCN_Trainer
+from codes.stage_5_code.evaluate_GCN import Evaluate_GCN
+from codes.stage_5_code.result_GCN import Results_GCN
 import numpy as np
 import torch
 

@@ -89,7 +89,7 @@ class Method_GCN_Class(method, nn.Module):
             bias=None
         return weight, bias
     
-    def graph_conv(self, input. adj, weight, bias):
+    def graph_conv(self, input, adj, weight, bias):
         support=torch.mm(input, weight)
         output=torch.sparse.mm(adj, support)
         if bias is not None:
