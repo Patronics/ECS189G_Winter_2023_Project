@@ -15,6 +15,6 @@ DATASET_NAME = 'cora'
 dataset_loader = Dataset_Loader(DATASET_NAME, '')
 dataset_loader.dataset_name = DATASET_NAME
 dataset_loader.dataset_source_file_name = DATASET_NAME #not used
-dataset_loader.dataset_source_folder_path = f'./data/stage_5_data/{DATASET_NAME}'
+dataset_loader.dataset_source_folder_path = f'../../data/stage_5_data/{DATASET_NAME}'
 dataset = dataset_loader.load()
 print()
