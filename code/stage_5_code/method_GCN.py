@@ -52,7 +52,7 @@ class Method_GCN_Class(nn.Module):
         if bias is not None:
             output=output+bias
         return output
-    def __init__(self,deviceType):
+    def __init__(self, mName=None, mDescription=None, deviceType=None):
         super(Method_GCN_Class,self).__init__()
         self.deviceType = deviceType
         in_features = 1433
@@ -89,3 +89,22 @@ class Method_GCN_Class(nn.Module):
             loss.backward()
             optimizer.step()
             progress.set_postfix_str(f'Loss: {float(loss.cpu().detach().numpy()):7.6f}', refresh=True)
+    
+    def test_model(self,dataset):
+        test_IDX = dataset['train_test_val']['idx_test']
+        x = dataset['graph']['X']
+        y = dataset['graph']['y']
+        adj = dataset['graph']['utility']['A']
+        outputs = self(x,adj)
+        _,outputLabels = torch.max(outputs.data,1)
+        print(classification_report(y[test_IDX].cpu().detach().numpy(), outputLabels[test_IDX].cpu().detach().numpy()))
+        return
+
+    def run(self, trainData, testData):
+        print('method running...')
+        print('--start training...')
+        
+        self.train_model(trainData)
+        
+        print('--start testing...')
+        return (self.test_model(testData),testData.yLabels)

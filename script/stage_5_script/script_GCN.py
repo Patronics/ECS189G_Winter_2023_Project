@@ -59,19 +59,16 @@ if 1:
     #---- Object Initialization ----
 
     dataset_loader = Dataset_Loader(DATASET_NAME, '')
-    dataset = dataset_loader.load()
-    method = Method_GCN_Class('GCN', '', in_features=dataset['graph']['X'], out_features=dataset['graph']['Y'],rnn_model=model_type ,mDevice=device)
-
+    #dataset = dataset_loader.load() #done in Setting_GCN
     dataset.dataset_source_file_name = DATASET_NAME #not used
     dataset.dataset_source_folder_path = '../../data/'
-    
+    method = Method_GCN_Class('GCN', '' ,mDevice=device)
 
-    
     result = Results_RNN('Saver', '')
     result.result_destination_folder_path = '../../result/stage_5_result/RNN_'
     result.result_destination_file_name = 'prediction_result-'+DATASET_NAME
     
-    evaluate = Evaluate_RNN('accuracy', '')
+    evaluate = Evaluate_GCN('accuracy', '')
     
     setting = RNN_Trainer(f'RNN {DATASET_NAME} trainer', '')
     
