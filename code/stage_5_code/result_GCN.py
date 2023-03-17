@@ -27,6 +27,10 @@ class Results_GCN(result):
 
     def save(self):
         print('saving results...')
+        if not os.path.exists(self.result_destination_folder_path):
+            # Create the directory
+            os.mkdir(self.result_destination_folder_path)
+            print(f"Directory '{self.result_destination_folder_path}' created.")
         f = open(self.result_destination_folder_path + self.result_destination_file_name, 'wb')
         pickle.dump(self.data, f)
         f.close()

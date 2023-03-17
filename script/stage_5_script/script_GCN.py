@@ -10,10 +10,11 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 # -----------------------
 
 # -- configuration variables -- #
-useGPU = True
+useGPU = False
 #  uncomment or edit to whichever dataset you'd like to run the network on by default
 DATASET_NAME = 'cora' #choose from 'Cora', 'citeseer', or 'pubmed'
 MODEL_TYPE = "GCN"
+
 
 
 
@@ -61,11 +62,11 @@ if 1:
     dataset = Dataset_Loader(DATASET_NAME, '')
     #dataset = dataset_loader.load() #done in Setting_GCN
     dataset.dataset_source_file_name = DATASET_NAME #not used
-    dataset.dataset_source_folder_path = '../../data/'
+    dataset.dataset_source_folder_path = '../../data/stage_5_data/'+DATASET_NAME+'/'
     method = Method_GCN_Class('GCN', '' ,deviceType=device)
 
     result = Results_GCN('Saver', '')
-    result.result_destination_folder_path = '../../result/stage_5_result/GCN_'
+    result.result_destination_folder_path = '../../result/stage_5_result'
     result.result_destination_file_name = 'prediction_result-'+DATASET_NAME
     
     evaluate = Evaluate_GCN('accuracy', '')

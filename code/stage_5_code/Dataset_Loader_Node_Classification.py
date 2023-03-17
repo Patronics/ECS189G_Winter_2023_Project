@@ -45,7 +45,7 @@ class Dataset_Loader(dataset):
         print('Loading {} dataset...'.format(self.dataset_name))
 
         # load node data from file
-        idx_features_labels = np.genfromtxt("{}/node".format(self.dataset_source_folder_path), dtype=np.dtype(str))
+        idx_features_labels = np.genfromtxt("{}node".format(self.dataset_source_folder_path), dtype=np.dtype(str))
         features = sp.csr_matrix(idx_features_labels[:, 1:-1], dtype=np.float32)
         onehot_labels = self.encode_onehot(idx_features_labels[:, -1])
 
@@ -66,6 +66,9 @@ class Dataset_Loader(dataset):
 
         # the following part, you can either put them into the setting class or you can leave them in the dataset loader
         # the following train, test, val index are just examples, sample the train, test according to project requirements
+        idx_train = 0
+        idx_test = 0
+        idx_val = 0
         if self.dataset_name == 'cora':
             idx_train = range(140)
             idx_test = range(200, 1200)
@@ -92,7 +95,9 @@ class Dataset_Loader(dataset):
         # val_x = features[idx_val]
         # test_x = features[idx_test]
         # print(train_x, val_x, test_x)
-
         train_test_val = {'idx_train': idx_train, 'idx_test': idx_test, 'idx_val': idx_val}
         graph = {'node': idx_map, 'edge': edges, 'X': features, 'y': labels, 'utility': {'A': adj, 'reverse_idx': reverse_idx_map}}
+        self.data={}
+        self.data['graph']=graph
+        self.data['train_test_val']=train_test_val
         return {'graph': graph, 'train_test_val': train_test_val}

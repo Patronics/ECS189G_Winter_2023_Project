@@ -54,6 +54,7 @@ class Method_GCN_Class(nn.Module):
         return output
     def __init__(self, mName=None, mDescription=None, deviceType=None):
         super(Method_GCN_Class,self).__init__()
+        method.__init__(self, mName, mDescription)
         self.deviceType = deviceType
         in_features = 1433
         hidden_dim = 16
@@ -97,14 +98,14 @@ class Method_GCN_Class(nn.Module):
         adj = dataset['graph']['utility']['A']
         outputs = self(x,adj)
         _,outputLabels = torch.max(outputs.data,1)
-        print(classification_report(y[test_IDX].cpu().detach().numpy(), outputLabels[test_IDX].cpu().detach().numpy()))
-        return
+        #print(classification_report(y[test_IDX].cpu().detach().numpy(), outputLabels[test_IDX].cpu().detach().numpy()))
+        return outputLabels[test_IDX].cpu().detach()
 
-    def run(self, trainData, testData):
+    def run(self, dataset):
         print('method running...')
         print('--start training...')
         
-        self.train_model(trainData)
+        self.train_model(dataset)
         
         print('--start testing...')
-        return (self.test_model(testData),testData.yLabels)
+        return (self.test_model(dataset),dataset['train_test_val']['idx_test'])

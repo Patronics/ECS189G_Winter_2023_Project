@@ -8,6 +8,7 @@ Base evaluate class for all evaluation metrics and methods
 #-- compatibility layer --
 import sys
 import os
+import torch
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
@@ -27,19 +28,20 @@ class Evaluate_GCN(evaluate):
         self.evaluate_description = eDescription
 
 
-    def evaluate(self):
+    def evaluate(self, dataset):
         print('evaluating performance...\n')
-        dataPred = self.data[0]
-        dataTrue = self.data[1]
+        dataPred = outputLabels[test_IDX].cpu().detach().numpy()
+        dataTrue = y[test_IDX].cpu().detach().numpy()
         return accuracy_score(dataTrue.cpu(), dataPred.cpu())
 
-    def classificationReport(self):
+    def classificationReport(self, dataset, outputs):
         test_IDX = dataset['train_test_val']['idx_test']
         x = dataset['graph']['X']
         y = dataset['graph']['y']
         adj = dataset['graph']['utility']['A']
-        outputs = self(x,adj)
-        _,outputLabels = torch.max(outputs.data,1)
+        #outputs = self(x,adj)
+        print(outputs)
+        _,outputLabels = torch.max(outputs[0],1)
         dataPred = outputLabels[test_IDX].cpu().detach().numpy()
         dataTrue = y[test_IDX].cpu().detach().numpy()
         print(classification_report(dataTrue, dataPred))
