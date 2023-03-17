@@ -22,7 +22,6 @@ from codes.base_class.setting import setting
 class GCN_Trainer(setting):
     def load_run_save_evaluate(self,datasetName):
         self.dataset.load()
-        
         self.method.data = self.dataset.data
         result = self.method.run(self.dataset.data)
         print(result[0])

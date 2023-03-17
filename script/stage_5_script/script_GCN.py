@@ -59,7 +59,7 @@ if 1:
 
     #---- Object Initialization ----
 
-    dataset = Dataset_Loader(DATASET_NAME, '')
+    dataset = Dataset_Loader(seed=2,dName=DATASET_NAME, dDescription='')
     #dataset = dataset_loader.load() #done in Setting_GCN
     dataset.dataset_source_file_name = DATASET_NAME #not used
     dataset.dataset_source_folder_path = '../../data/stage_5_data/'+DATASET_NAME+'/'

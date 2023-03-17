@@ -16,10 +16,10 @@ from tqdm import trange
 from codes.stage_5_code.Dataset_Loader_Node_Classification import Dataset_Loader
 from sklearn.metrics import accuracy_score,classification_report
 DATASET_NAME = 'pubmed'
-dataset_loader = Dataset_Loader(DATASET_NAME, '')
-dataset_loader.dataset_name = DATASET_NAME
+dataset_loader = Dataset_Loader(seed=2,dName=DATASET_NAME, dDescription='')
+#dataset_loader.dataset_name = DATASET_NAME
 dataset_loader.dataset_source_file_name = DATASET_NAME #not used
-dataset_loader.dataset_source_folder_path = f'../../data/stage_5_data/{DATASET_NAME}'
+dataset_loader.dataset_source_folder_path = f'../../data/stage_5_data/{DATASET_NAME}/'
 dataset = dataset_loader.load()
 
 in_features = 500
