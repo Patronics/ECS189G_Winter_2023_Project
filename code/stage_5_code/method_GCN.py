@@ -14,6 +14,9 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__fi
 sys.path.insert(0, ROOT_DIR)
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
+generateConvergenceChart=False
+
+
 # -----------------------
 from codes.stage_5_code.evaluate_GCN import Evaluate_GCN
 from codes.base_class.method import method
@@ -31,7 +34,8 @@ try:
 except (ImportError, ModuleNotFoundError) as e:
     print("tqdm module not detected, for improved progress updates, install tqdm")
     trange = range
-
+if generateConvergenceChart:
+    trange = range
 #-----------------------------------------------------
 
 class Method_GCN_Class(nn.Module):
@@ -84,7 +88,10 @@ class Method_GCN_Class(nn.Module):
         y = dataset['graph']['y']
         adj = dataset['graph']['utility']['A']
         progress = trange(epochs)
-        
+        #for convergence chart, replace above with:
+        #progress = range(epochs)
+        if generateConvergenceChart:
+            print("epoch, loss")
         for epoch in progress:
             outputs = self(x,adj)
             loss = criterion(outputs[train_IDX],y[train_IDX])
@@ -96,8 +103,10 @@ class Method_GCN_Class(nn.Module):
             
             loss.backward()
             optimizer.step()
-            scheduler.step()
-            progress.set_postfix_str(f'Loss: {float(loss.cpu().detach().numpy()):7.6f}', refresh=True)
+            if generateConvergenceChart and epoch % 5 == 0:
+                print(f'{epoch},{float(loss.cpu().detach().numpy()):7.6f}')
+            if not generateConvergenceChart:
+                progress.set_postfix_str(f'Loss: {float(loss.cpu().detach().numpy()):7.6f}', refresh=True)
     
     def test_model(self,dataset):
         test_IDX = dataset['train_test_val']['idx_test']
