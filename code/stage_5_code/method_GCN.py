@@ -98,7 +98,7 @@ class Method_GCN_Class(nn.Module):
             optimizer.zero_grad()
             
             # Early Stop
-            if loss <= 0.02:
+            if loss <= 0.01:
                 return
             
             loss.backward()

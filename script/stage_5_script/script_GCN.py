@@ -12,9 +12,9 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 # -- configuration variables -- #
 useGPU = False
 #  uncomment or edit to whichever dataset you'd like to run the network on by default
-# DATASET_NAME = 'cora' #choose from 'cora', 'citeseer', or 'pubmed'
+DATASET_NAME = 'cora' #choose from 'cora', 'citeseer', or 'pubmed'
 # DATASET_NAME = 'citeseer'
-DATASET_NAME = 'pubmed'
+# DATASET_NAME = 'pubmed'
 
 MODEL_TYPE = "GCN"
 
@@ -67,8 +67,8 @@ if 1:
     elif DATASET_NAME == 'citeseer':
         model_in_features = 3703
         model_out_features = 6
-        hidden_dim = 17
-        dropout = 0.15
+        hidden_dim = 24
+        dropout = 0.2
     elif DATASET_NAME == 'pubmed':
         model_in_features = 500
         model_out_features = 3
