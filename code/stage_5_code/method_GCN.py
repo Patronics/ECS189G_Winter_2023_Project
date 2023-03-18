@@ -57,9 +57,9 @@ class Method_GCN_Class(nn.Module):
         method.__init__(self, mName, mDescription)
         self.deviceType = deviceType
         #in_features = #1433
-        hidden_dim = 16
+        hidden_dim = 24
         #out_features = 7
-        self.dropout = 0.1
+        self.dropout = 0.15
         
         self.gc1_weight, self.gc1_bias = self.init_params(in_features, hidden_dim)
         self.gc2_weight, self.gc2_bias = self.init_params(hidden_dim, out_features)
@@ -72,9 +72,10 @@ class Method_GCN_Class(nn.Module):
         return F.log_softmax(data, dim=1).cpu() # use softmax perhaps
     
     def train_model(self,dataset):
-        epochs = 200
+        epochs = 2000
         lr = 0.01
         optimizer = torch.optim.Adam(self.parameters(),lr=lr,weight_decay=5e-4)
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.85)
         criterion = torch.nn.CrossEntropyLoss()
         self.train()
 
@@ -83,12 +84,19 @@ class Method_GCN_Class(nn.Module):
         y = dataset['graph']['y']
         adj = dataset['graph']['utility']['A']
         progress = trange(epochs)
+        
         for epoch in progress:
             outputs = self(x,adj)
             loss = criterion(outputs[train_IDX],y[train_IDX])
             optimizer.zero_grad()
+            
+            # Early Stop
+            if loss <= 0.005:
+                return
+            
             loss.backward()
             optimizer.step()
+            scheduler.step()
             progress.set_postfix_str(f'Loss: {float(loss.cpu().detach().numpy()):7.6f}', refresh=True)
     
     def test_model(self,dataset):
