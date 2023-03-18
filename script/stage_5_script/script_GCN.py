@@ -60,7 +60,7 @@ if 1:
         model_in_features = 1433
         model_out_features = 7
     elif DATASET_NAME == 'citeseer':
-        model_in_features = 3312
+        model_in_features = 3703
         model_out_features = 6
     elif DATASET_NAME == 'pubmed':
         model_in_features = 500
