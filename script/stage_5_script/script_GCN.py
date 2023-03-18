@@ -12,7 +12,7 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 # -- configuration variables -- #
 useGPU = False
 #  uncomment or edit to whichever dataset you'd like to run the network on by default
-DATASET_NAME = 'citeseer' #choose from 'cora', 'citeseer', or 'pubmed'
+DATASET_NAME = 'cora' #choose from 'cora', 'citeseer', or 'pubmed'
 MODEL_TYPE = "GCN"
 
 if (len(sys.argv)==2):
@@ -53,14 +53,25 @@ if 1:
             device = torch.device("cpu")
             print("No compatible GPU Detected. Using CPU")
         print()
-
+    
+    model_in_features = 0
+    model_out_features = 0
+    if 'cora' in DATASET_NAME:  #handle both cora and cora-small
+        model_in_features = 1433
+        model_out_features = 7
+    elif DATASET_NAME == 'citeseer':
+        model_in_features = 3312
+        model_out_features = 6
+    elif DATASET_NAME == 'pubmed':
+        model_in_features = 500
+        model_out_features = 3
     #---- Object Initialization ----
 
     dataset = Dataset_Loader(seed=2,dName=DATASET_NAME, dDescription='')
     #dataset = dataset_loader.load() #done in Setting_GCN
     dataset.dataset_source_file_name = DATASET_NAME #not used
     dataset.dataset_source_folder_path = '../../data/stage_5_data/'+DATASET_NAME+'/'
-    method = Method_GCN_Class('GCN', '' ,deviceType=device)
+    method = Method_GCN_Class('GCN', '' ,deviceType=device, in_features=model_in_features, out_features=model_out_features)
 
     result = Results_GCN('Saver', '')
     result.result_destination_folder_path = '../../result/stage_5_result'
