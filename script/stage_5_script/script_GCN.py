@@ -12,11 +12,8 @@ os.chdir(os.path.dirname(os.path.realpath(__file__)))
 # -- configuration variables -- #
 useGPU = False
 #  uncomment or edit to whichever dataset you'd like to run the network on by default
-DATASET_NAME = 'cora' #choose from 'Cora', 'citeseer', or 'pubmed'
+DATASET_NAME = 'citeseer' #choose from 'cora', 'citeseer', or 'pubmed'
 MODEL_TYPE = "GCN"
-
-
-
 
 if (len(sys.argv)==2):
     DATASET_NAME = sys.argv[1]

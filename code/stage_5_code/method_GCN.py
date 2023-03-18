@@ -99,7 +99,7 @@ class Method_GCN_Class(nn.Module):
         outputs = self(x,adj)
         _,outputLabels = torch.max(outputs.data,1)
         #print(classification_report(y[test_IDX].cpu().detach().numpy(), outputLabels[test_IDX].cpu().detach().numpy()))
-        return outputLabels[test_IDX].cpu().detach()
+        return (outputLabels[test_IDX].cpu().detach().numpy(),y[test_IDX].cpu().detach().numpy())
 
     def run(self, dataset):
         print('method running...')
@@ -108,4 +108,4 @@ class Method_GCN_Class(nn.Module):
         self.train_model(dataset)
         
         print('--start testing...')
-        return (self.test_model(dataset),dataset['train_test_val']['idx_test'])
+        return self.test_model(dataset)

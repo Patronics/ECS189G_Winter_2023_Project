@@ -24,9 +24,9 @@ class GCN_Trainer(setting):
         self.dataset.load()
         self.method.data = self.dataset.data
         result = self.method.run(self.dataset.data)
-        print(result[0])
+        #print(result[0])
         self.result.data = result[0]
         self.result.save()
         self.evaluate.data = result[0]
-        self.evaluate.classificationReport(self.method.data,result)
+        self.evaluate.classificationReport(result[1],result[0])
         return self.evaluate.evaluate(result)
