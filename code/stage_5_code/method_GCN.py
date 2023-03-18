@@ -61,9 +61,9 @@ class Method_GCN_Class(nn.Module):
         method.__init__(self, mName, mDescription)
         self.deviceType = deviceType
         #in_features = #1433
-        hidden_dim = 24
+        hidden_dim = 17
         #out_features = 7
-        self.dropout = 0.15
+        self.dropout = 0.12
         
         self.gc1_weight, self.gc1_bias = self.init_params(in_features, hidden_dim)
         self.gc2_weight, self.gc2_bias = self.init_params(hidden_dim, out_features)
@@ -76,10 +76,10 @@ class Method_GCN_Class(nn.Module):
         return F.log_softmax(data, dim=1).cpu() # use softmax perhaps
     
     def train_model(self,dataset):
-        epochs = 2000
+        epochs = 1000
         lr = 0.01
         optimizer = torch.optim.Adam(self.parameters(),lr=lr,weight_decay=5e-4)
-        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.85)
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.9)
         criterion = torch.nn.CrossEntropyLoss()
         self.train()
 
@@ -98,11 +98,13 @@ class Method_GCN_Class(nn.Module):
             optimizer.zero_grad()
             
             # Early Stop
-            if loss <= 0.005:
+            if loss <= 0.02:
                 return
             
             loss.backward()
             optimizer.step()
+            scheduler.step()
+            
             if generateConvergenceChart and epoch % 5 == 0:
                 print(f'{epoch},{float(loss.cpu().detach().numpy()):7.6f}')
             if not generateConvergenceChart:

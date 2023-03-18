@@ -90,5 +90,5 @@ if 1:
     setting.print_setup_summary()
     mean_score = setting.load_run_save_evaluate(DATASET_NAME)
     print('************ Overall Performance ************')
-    print('RNN Accuracy: ' + str(mean_score))
+    print('GCN Accuracy: ' + str(mean_score))
     print('************ Finish ************')
