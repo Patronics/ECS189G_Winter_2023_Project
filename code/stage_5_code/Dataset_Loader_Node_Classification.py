@@ -63,29 +63,50 @@ class Dataset_Loader(dataset):
         features = torch.FloatTensor(np.array(features.todense()))
         labels = torch.LongTensor(np.where(onehot_labels)[1])
         adj = self.sparse_mx_to_torch_sparse_tensor(norm_adj)
-
+        
+        def random_sample(indices, trainNodes, testNodes):
+            idx_train, idx_test = [], []
+            for label in unique_labels:
+                idx_train.extend(np.random.choice(indices[label],trainNodes, replace=False))
+                remaining_indices = np.setdiff1d(indices[label], idx_train)
+                idx_test.extend(np.random.choice(remaining_indices, testNodes, replace=False))
+            return idx_train, idx_test
+        
         # the following part, you can either put them into the setting class or you can leave them in the dataset loader
         # the following train, test, val index are just examples, sample the train, test according to project requirements
         idx_train = 0
         idx_test = 0
         idx_val = 0
+        
+        class_indices = {}
+        unique_labels = np.unique(labels)
+        for label in unique_labels:
+            class_indices[label] = np.where(labels == label)[0]
+        
         if self.dataset_name == 'cora':
-            idx_train = range(140)
-            idx_test = range(200, 1200)
-            idx_val = range(1200, 1500)
+            #requirement: randomly sample a training set with 140 nodes (20 node instances per class), and evaluate the learned model on a randomly sampled testing set with 1050 nodes (150 node instances per class)
+            #idx_train = range(140)
+            #idx_test = range(200, 1200)
+            #idx_val = range(1200, 1500)
+            idx_train, idx_test = random_sample(class_indices, 20, 150)
         elif self.dataset_name == 'citeseer':
-            idx_train = range(120)
-            idx_test = range(200, 1200)
-            idx_val = range(1200, 1500)
+            #requirement: randomly sample a training set with 120 nodes (20 node instances per class), and evaluate the learned model on a randomly sampled testing set with 1200 nodes (200 node instances per class).
+            # idx_train = range(120)
+            # idx_test = range(200, 1200)
+            # idx_val = range(1200, 1500)
+            idx_train, idx_test = random_sample(class_indices, 20, 200)
         elif self.dataset_name == 'pubmed':
-            idx_train = range(60)
-            idx_test = range(6300, 7300)
-            idx_val = range(6000, 6300)
+            #requirement:  randomly sample a training set with 60 nodes (20 node instances per class), and evaluate the learned model on a randomly sampled testing set with 600 nodes (200 node instances per class)
+            # idx_train = range(60)
+            # idx_test = range(6300, 7300)
+            # idx_val = range(6000, 6300)
+            idx_train, idx_test = random_sample(class_indices, 20, 200)
         #---- cora-small is a toy dataset I hand crafted for debugging purposes ---
         elif self.dataset_name == 'cora-small':
-            idx_train = range(5)
-            idx_val = range(5, 10)
-            idx_test = range(5, 10)
+            idx_train, idx_test = random_sample(class_indices, 5, 5)
+            # idx_train = range(5)
+            # idx_val = range(5, 10)
+            # idx_test = range(5, 10)
 
         idx_train = torch.LongTensor(idx_train)
         idx_val = torch.LongTensor(idx_val)
