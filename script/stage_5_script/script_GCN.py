@@ -83,7 +83,7 @@ if 1:
     method = Method_GCN_Class('GCN', '' ,deviceType=device, in_features=model_in_features, out_features=model_out_features, hidden_dim=hidden_dim, dropout=dropout)
 
     result = Results_GCN('Saver', '')
-    result.result_destination_folder_path = '../../result/stage_5_result'
+    result.result_destination_folder_path = '../../result/stage_5_result/'
     result.result_destination_file_name = 'prediction_result-'+DATASET_NAME
     
     evaluate = Evaluate_GCN('accuracy', '')
