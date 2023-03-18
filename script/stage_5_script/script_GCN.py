@@ -62,19 +62,25 @@ if 1:
     if 'cora' in DATASET_NAME:  #handle both cora and cora-small
         model_in_features = 1433
         model_out_features = 7
+        hidden_dim = 17
+        dropout = 0.15
     elif DATASET_NAME == 'citeseer':
         model_in_features = 3703
         model_out_features = 6
+        hidden_dim = 17
+        dropout = 0.15
     elif DATASET_NAME == 'pubmed':
         model_in_features = 500
         model_out_features = 3
+        hidden_dim = 20
+        dropout = 0.15
     #---- Object Initialization ----
 
     dataset = Dataset_Loader(seed=2,dName=DATASET_NAME, dDescription='')
     #dataset = dataset_loader.load() #done in Setting_GCN
     dataset.dataset_source_file_name = DATASET_NAME #not used
     dataset.dataset_source_folder_path = '../../data/stage_5_data/'+DATASET_NAME+'/'
-    method = Method_GCN_Class('GCN', '' ,deviceType=device, in_features=model_in_features, out_features=model_out_features)
+    method = Method_GCN_Class('GCN', '' ,deviceType=device, in_features=model_in_features, out_features=model_out_features, hidden_dim=hidden_dim, dropout=dropout)
 
     result = Results_GCN('Saver', '')
     result.result_destination_folder_path = '../../result/stage_5_result'

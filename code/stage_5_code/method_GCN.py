@@ -56,14 +56,14 @@ class Method_GCN_Class(nn.Module):
         if bias is not None:
             output=output+bias
         return output
-    def __init__(self, mName=None, mDescription=None, deviceType=None, in_features=0, out_features=0):
+    def __init__(self, mName=None, mDescription=None, deviceType=None, in_features=0, out_features=0, hidden_dim=0, dropout=0):
         super(Method_GCN_Class,self).__init__()
         method.__init__(self, mName, mDescription)
         self.deviceType = deviceType
         #in_features = #1433
-        hidden_dim = 17
+        # hidden_dim = 17
         #out_features = 7
-        self.dropout = 0.12
+        self.dropout = dropout
         
         self.gc1_weight, self.gc1_bias = self.init_params(in_features, hidden_dim)
         self.gc2_weight, self.gc2_bias = self.init_params(hidden_dim, out_features)
